@@ -15,9 +15,21 @@ const Register = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await axios.post("http://localhost:5000/api/register", formData);
+			const response = await axios.post(
+				"http://localhost:5000/api/register",
+				formData
+			);
+			alert("Registration successful!");
+			console.log(response.data); // You can use this data to set state or handle post-registration actions
 		} catch (error) {
-			console.error(error);
+			console.error(
+				"Error during registration:",
+				error.response ? error.response.data : error.message
+			);
+			alert(
+				"Registration failed: " +
+					(error.response ? error.response.data.error : error.message)
+			);
 		}
 	};
 
@@ -27,19 +39,25 @@ const Register = () => {
 				type="text"
 				name="username"
 				placeholder="Username"
+				value={formData.username}
 				onChange={handleChange}
+				required
 			/>
 			<input
 				type="email"
 				name="email"
 				placeholder="Email"
+				value={formData.email}
 				onChange={handleChange}
+				required
 			/>
 			<input
 				type="password"
 				name="password"
 				placeholder="Password"
+				value={formData.password}
 				onChange={handleChange}
+				required
 			/>
 			<button type="submit">Register</button>
 		</form>
