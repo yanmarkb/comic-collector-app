@@ -26,20 +26,20 @@ const Register = () => {
 			<input
 				type="text"
 				name="username"
-				onChange={handleChange}
 				placeholder="Username"
+				onChange={handleChange}
 			/>
 			<input
 				type="email"
 				name="email"
-				onChange={handleChange}
 				placeholder="Email"
+				onChange={handleChange}
 			/>
 			<input
 				type="password"
 				name="password"
-				onChange={handleChange}
 				placeholder="Password"
+				onChange={handleChange}
 			/>
 			<button type="submit">Register</button>
 		</form>
