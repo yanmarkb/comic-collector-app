@@ -9,6 +9,7 @@ const Collection = ({ userId }) => {
 			const fetchComics = async () => {
 				try {
 					const response = await axios.get(
+						// eslint-disable-next-line
 						"http://localhost:5000/api/collection/${userId}"
 					);
 					setComics(response.data);
@@ -19,6 +20,7 @@ const Collection = ({ userId }) => {
 
 			fetchComics();
 		},
+		// eslint-disable-next-line
 		{ userId }
 	);
 

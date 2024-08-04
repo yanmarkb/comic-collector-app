@@ -8,6 +8,7 @@ const Profile = ({ userId }) => {
 		const fetchProfile = async () => {
 			try {
 				const response = await axios.get(
+					// eslint-disable-next-line
 					"http://localhost:5000/api/user/${userId}"
 				);
 				setProfile(response.data);
