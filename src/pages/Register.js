@@ -19,17 +19,15 @@ const Register = () => {
 				"http://localhost:5000/api/register",
 				formData
 			);
-			alert("Registration successful!");
-			console.log(response.data); // You can use this data to set state or handle post-registration actions
+			console.log("Registration successful:", response.data);
 		} catch (error) {
-			console.error(
-				"Error during registration:",
-				error.response ? error.response.data : error.message
-			);
-			alert(
-				"Registration failed: " +
-					(error.response ? error.response.data.error : error.message)
-			);
+			if (error.response) {
+				console.error("Error during registration:", error.response.data);
+			} else if (error.request) {
+				console.error("No response received:", error.request);
+			} else {
+				console.error("Error setting up request:", error.message);
+			}
 		}
 	};
 
