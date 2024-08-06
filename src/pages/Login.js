@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Login = () => {
-	const [formData, setFormData] = useState({ email: "", password: "" });
+	const [formData, setFormData] = useState({
+		email: "",
+		password: "",
+	});
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -11,15 +14,31 @@ const Login = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await axios.post("http://localhost:5000/api/login", formData);
+			const response = await axios.post(
+				"http://localhost:5000/api/login",
+				formData
+			);
+			localStorage.setItem("token", response.data.token);
+			window.location.href = "/profile"; // Redirect to the protected page
 		} catch (error) {
-			console.error(error);
+			if (error.response) {
+				console.error("Error during login:", error.response.data);
+			} else if (error.request) {
+				console.error("No response received:", error.request);
+			} else {
+				console.error("Error setting up request:", error.message);
+			}
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<input tpye="email" placeholder="Email" onChange={handleChange} />
+			<input
+				type="email"
+				name="email"
+				placeholder="Email"
+				onChange={handleChange}
+			/>
 			<input
 				type="password"
 				name="password"

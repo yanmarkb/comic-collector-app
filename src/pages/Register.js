@@ -19,7 +19,8 @@ const Register = () => {
 				"http://localhost:5000/api/register",
 				formData
 			);
-			console.log("Registration successful:", response.data);
+			localStorage.setItem("token", response.data.token);
+			window.location.href = "/profile"; // Redirect to the protected page
 		} catch (error) {
 			if (error.response) {
 				console.error("Error during registration:", error.response.data);
@@ -37,25 +38,19 @@ const Register = () => {
 				type="text"
 				name="username"
 				placeholder="Username"
-				value={formData.username}
 				onChange={handleChange}
-				required
 			/>
 			<input
 				type="email"
 				name="email"
 				placeholder="Email"
-				value={formData.email}
 				onChange={handleChange}
-				required
 			/>
 			<input
 				type="password"
 				name="password"
 				placeholder="Password"
-				value={formData.password}
 				onChange={handleChange}
-				required
 			/>
 			<button type="submit">Register</button>
 		</form>
