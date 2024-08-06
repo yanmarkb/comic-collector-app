@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
 	BrowserRouter as Router,
 	Route,
@@ -13,17 +13,29 @@ import Profile from "./pages/Profile";
 import AddComic from "./pages/AddComic";
 import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
+import { logout } from "./services/authService";
 
 const isAuthenticated = () => {
 	return !!localStorage.getItem("token");
 };
-
+// eslint-disable-next-line
 const handleLogout = () => {
-	localStorage.removeItem("token");
+	logout();
 	window.location.href = "/login";
 };
 
 function App() {
+	const [auth, setAuth] = useState(isAuthenticated());
+
+	useEffect(() => {
+		setAuth(isAuthenticated());
+	}, []);
+
+	const handleLogout = () => {
+		logout();
+		setAuth(false);
+	};
+
 	return (
 		<Router>
 			<div>
@@ -32,7 +44,7 @@ function App() {
 						<li>
 							<Link to="/">Home</Link>
 						</li>
-						{!isAuthenticated() && (
+						{!auth && (
 							<>
 								<li>
 									<Link to="/register">Register</Link>
@@ -42,7 +54,7 @@ function App() {
 								</li>
 							</>
 						)}
-						{isAuthenticated() && (
+						{auth && (
 							<>
 								<li>
 									<Link to="/profile">Profile</Link>
@@ -65,29 +77,23 @@ function App() {
 				</nav>
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/register" element={<Register />} />
-					<Route path="/login" element={<Login />} />
+					<Route path="/register" element={<Register setAuth={setAuth} />} />
+					<Route path="/login" element={<Login setAuth={setAuth} />} />
 					<Route
 						path="/profile"
-						element={isAuthenticated() ? <Profile /> : <Navigate to="/login" />}
+						element={auth ? <Profile /> : <Navigate to="/login" />}
 					/>
 					<Route
 						path="/add-comic"
-						element={
-							isAuthenticated() ? <AddComic /> : <Navigate to="/login" />
-						}
+						element={auth ? <AddComic /> : <Navigate to="/login" />}
 					/>
 					<Route
 						path="/collection"
-						element={
-							isAuthenticated() ? <Collection /> : <Navigate to="/login" />
-						}
+						element={auth ? <Collection /> : <Navigate to="/login" />}
 					/>
 					<Route
 						path="/wishlist"
-						element={
-							isAuthenticated() ? <Wishlist /> : <Navigate to="/login" />
-						}
+						element={auth ? <Wishlist /> : <Navigate to="/login" />}
 					/>
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>

@@ -1,0 +1,56 @@
+.home {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+  }
+  
+  .comic-row {
+    position: absolute;
+    white-space: nowrap;
+    height: 200px;
+    width: 200%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .comic-row img {
+    height: 100%;
+    width: auto;
+    margin: 0 5px;
+  }
+  
+  .comic-row:nth-child(1) {
+    top: 0;
+    animation: scroll-right 20s linear infinite;
+  }
+  
+  .comic-row:nth-child(2) {
+    top: 200px;
+    animation: scroll-left 20s linear infinite;
+  }
+  
+  .comic-row:nth-child(3) {
+    top: 400px;
+    animation: scroll-right 20s linear infinite;
+  }
+  
+  @keyframes scroll-right {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  
+  @keyframes scroll-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(50%);
+    }
+  }
+  
