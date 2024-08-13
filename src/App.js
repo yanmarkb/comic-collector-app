@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import AddComic from "./pages/AddComic";
 import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
+import ComicDetails from "./pages/ComicDetails";
 import { logout } from "./services/authService";
 
 const isAuthenticated = () => {
@@ -89,6 +90,10 @@ function App() {
 					<Route
 						path="/wishlist"
 						element={auth ? <Wishlist /> : <Navigate to="/login" />}
+					/>
+					<Route
+						path="/comic/:id"
+						element={auth ? <ComicDetails /> : <Navigate to="/login" />}
 					/>
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>
