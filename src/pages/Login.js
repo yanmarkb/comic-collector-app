@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Login = () => {
+const Login = ({ setAuth }) => {
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -19,7 +19,8 @@ const Login = () => {
 				formData
 			);
 			localStorage.setItem("token", response.data.token);
-			window.location.href = "/profile"; // Redirect to the protected page
+			setAuth(true);
+			window.location.href = "/profile";
 		} catch (error) {
 			if (error.response) {
 				console.error("Error during login:", error.response.data);

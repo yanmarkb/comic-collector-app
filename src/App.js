@@ -18,11 +18,6 @@ import { logout } from "./services/authService";
 const isAuthenticated = () => {
 	return !!localStorage.getItem("token");
 };
-// eslint-disable-next-line
-const handleLogout = () => {
-	logout();
-	window.location.href = "/login";
-};
 
 function App() {
 	const [auth, setAuth] = useState(isAuthenticated());

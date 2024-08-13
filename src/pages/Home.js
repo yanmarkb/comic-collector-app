@@ -17,7 +17,7 @@ const Home = () => {
 
 	const renderRow = (comics, reverse = false) => (
 		<div className={`comic-row ${reverse ? "reverse" : ""}`}>
-			{comics.concat(comics).map((comic) => (
+			{[...comics, ...comics].map((comic) => (
 				<img key={comic.id} src={comic.image.original_url} alt={comic.name} />
 			))}
 		</div>
@@ -25,9 +25,9 @@ const Home = () => {
 
 	return (
 		<div className="home">
-			{renderRow(comics.slice(0, 20))}
-			{renderRow(comics.slice(20, 40), true)}
-			{renderRow(comics.slice(40, 60))}
+			{renderRow(comics.slice(0, 10))}
+			{renderRow(comics.slice(10, 20), true)}
+			{renderRow(comics.slice(20, 30))}
 		</div>
 	);
 };

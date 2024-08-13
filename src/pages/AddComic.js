@@ -2,28 +2,28 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const AddComic = ({ userId }) => {
-	const [comicId, setComicId] = useState("");
-	const [comic, setComic] = useState(null);
+	const [comicName, setComicName] = useState("");
+	const [comics, setComics] = useState([]);
 
 	const handleSearch = async () => {
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/api/comic/${comicId}`
+				`http://localhost:5000/api/comics/search/${comicName}`
 			);
-			setComic(response.data);
+			setComics(response.data);
 		} catch (error) {
-			console.error(error);
+			console.error("Error fetching comics:", error);
 		}
 	};
 
-	const handleAdd = async () => {
+	const handleAdd = async (comic) => {
 		try {
 			await axios.post("http://localhost:5000/api/comics", {
 				...comic,
 				user_id: userId,
 			});
 		} catch (error) {
-			console.error(error);
+			console.error("Error adding comic:", error);
 		}
 	};
 
@@ -31,17 +31,23 @@ const AddComic = ({ userId }) => {
 		<div>
 			<input
 				type="text"
-				value={comicId}
-				onChange={(e) => setComicId(e.target.value)}
-				placeholder="Comic ID"
+				value={comicName}
+				onChange={(e) => setComicName(e.target.value)}
+				placeholder="Comic Name"
 			/>
 			<button onClick={handleSearch}>Search</button>
 
-			{comic && (
+			{comics.length > 0 && (
 				<div>
-					<h2>{comic.name}</h2>
-					<img src={comic.image.original_url} alt={comic.name} />
-					<button onClick={handleAdd}>Add to Collection</button>
+					{comics.map((comic) => (
+						<div key={comic.id}>
+							<h2>{comic.name}</h2>
+							<img src={comic.image.original_url} alt={comic.name} />
+							<button onClick={() => handleAdd(comic)}>
+								Add to Collection
+							</button>
+						</div>
+					))}
 				</div>
 			)}
 		</div>
