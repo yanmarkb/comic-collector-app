@@ -1,18 +1,28 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./AddComic.css"; // Import the CSS file
 
 const AddComic = ({ userId }) => {
 	const [comicName, setComicName] = useState("");
 	const [comics, setComics] = useState([]);
 	const [page, setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 
-	const handleSearch = async () => {
+	const handleSearch = async (reset = false) => {
 		try {
 			const response = await axios.get(
 				`http://localhost:5000/api/comics/search/${comicName}?page=${page}`
 			);
-			setComics(response.data);
+			const fetchedComics = response.data;
+
+			if (reset) {
+				setComics(fetchedComics);
+				setHasMore(fetchedComics.length === 14);
+			} else {
+				setComics((prevComics) => [...prevComics, ...fetchedComics]);
+				setHasMore(fetchedComics.length === 14);
+			}
 		} catch (error) {
 			console.error("Error fetching comics:", error);
 		}
@@ -29,17 +39,21 @@ const AddComic = ({ userId }) => {
 		}
 	};
 
-	const handleNextPage = () => {
-		setPage(page + 1);
-		handleSearch();
+	const handleShowMore = () => {
+		setPage((prevPage) => prevPage + 1);
 	};
 
-	const handlePreviousPage = () => {
+	const handleSearchButtonClick = () => {
+		setPage(1);
+		handleSearch(true);
+	};
+
+	React.useEffect(() => {
 		if (page > 1) {
-			setPage(page - 1);
 			handleSearch();
 		}
-	};
+		// eslint-disable-next-line
+	}, [page]);
 
 	return (
 		<div className="comic-search-container">
@@ -50,14 +64,14 @@ const AddComic = ({ userId }) => {
 				placeholder="Comic Name"
 				className="search-input"
 			/>
-			<button onClick={handleSearch} className="search-button">
+			<button onClick={handleSearchButtonClick} className="search-button">
 				Search
 			</button>
 
 			<div className="comics-shelf">
 				{comics.length > 0 &&
-					comics.map((comic) => (
-						<div key={comic.id} className="comic-item">
+					comics.map((comic, index) => (
+						<div key={index} className="comic-item">
 							<Link to={`/comic/${comic.id}`}>
 								<img
 									src={comic.image.original_url}
@@ -73,15 +87,10 @@ const AddComic = ({ userId }) => {
 					))}
 			</div>
 
-			{comics.length > 0 && (
+			{hasMore && comics.length > 0 && (
 				<div className="pagination-controls">
-					{page > 1 && (
-						<button onClick={handlePreviousPage} className="pagination-button">
-							Previous
-						</button>
-					)}
-					<button onClick={handleNextPage} className="pagination-button">
-						Next
+					<button onClick={handleShowMore} className="pagination-button">
+						Show More...
 					</button>
 				</div>
 			)}
