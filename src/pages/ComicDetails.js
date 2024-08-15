@@ -1,39 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
+import React from "react";
 
-const ComicDetails = () => {
-	const { id } = useParams(); // Get the comic ID from the URL
-	const [comic, setComic] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
-
-	useEffect(() => {
-		const fetchComic = async () => {
-			try {
-				const response = await axios.get(
-					`http://localhost:5000/api/comic/${id}`
-				);
-				setComic(response.data);
-				setLoading(false);
-			} catch (error) {
-				console.error("Error fetching comic details:", error);
-				setError("Failed to fetch comic details.");
-				setLoading(false);
-			}
-		};
-
-		fetchComic();
-	}, [id]);
-
-	if (loading) {
-		return <div>Loading...</div>;
-	}
-
-	if (error) {
-		return <div>{error}</div>;
-	}
-
+const ComicDetails = ({ comic }) => {
 	if (!comic) {
 		return <div>No comic found.</div>;
 	}

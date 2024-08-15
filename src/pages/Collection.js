@@ -4,25 +4,20 @@ import axios from "axios";
 const Collection = ({ userId }) => {
 	const [comics, setComics] = useState([]);
 
-	useEffect(
-		() => {
-			const fetchComics = async () => {
-				try {
-					const response = await axios.get(
-						// eslint-disable-next-line
-						"http://localhost:5000/api/collection/${userId}"
-					);
-					setComics(response.data);
-				} catch (error) {
-					console.error(error);
-				}
-			};
+	useEffect(() => {
+		const fetchComics = async () => {
+			try {
+				const response = await axios.get(
+					`http://localhost:5000/api/collection/${userId}`
+				);
+				setComics(response.data);
+			} catch (error) {
+				console.error("Error fetching collection:", error);
+			}
+		};
 
-			fetchComics();
-		},
-		// eslint-disable-next-line
-		{ userId }
-	);
+		fetchComics();
+	}, [userId]);
 
 	return (
 		<div>
@@ -31,7 +26,7 @@ const Collection = ({ userId }) => {
 				{comics.map((comic) => (
 					<li key={comic.id}>
 						<h2>
-							{comic.title} - Issue #{comic.issue_numer}
+							{comic.title} - Issue #{comic.issue_number}
 						</h2>
 						<img src={comic.cover_image_url} alt={comic.title} />
 					</li>
