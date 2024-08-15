@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import ComicDetails from "./ComicDetails"; // Import the ComicDetails component
-import "./AddComic.css"; // Import the CSS file
+import ComicDetails from "./ComicDetails";
+import "./AddComic.css";
 
 const AddComic = ({ userId }) => {
 	const [comicName, setComicName] = useState("");
@@ -20,10 +20,10 @@ const AddComic = ({ userId }) => {
 
 			if (reset) {
 				setComics(fetchedComics);
-				setHasMore(fetchedComics.length === 14);
+				setHasMore(fetchedComics.length === 18);
 			} else {
 				setComics((prevComics) => [...prevComics, ...fetchedComics]);
-				setHasMore(fetchedComics.length === 14);
+				setHasMore(fetchedComics.length === 18);
 			}
 		} catch (error) {
 			console.error("Error fetching comics:", error);
