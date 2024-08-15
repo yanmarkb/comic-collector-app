@@ -32,17 +32,37 @@ const AddComic = ({ userId }) => {
 
 	const handleAdd = async (comic) => {
 		try {
+			const userId = localStorage.getItem("userId");
+
 			if (!userId) {
 				console.error("User ID is missing, cannot add comic.");
 				return;
 			}
+
 			console.log("User ID:", userId); // Debugging line to check userId
 			console.log("Comic Data:", comic); // Debugging line to check comic data being sent
 
-			await axios.post("http://localhost:5000/api/comics", {
-				...comic,
+			// Check if comic.publisher is defined, and use a fallback value if it's not
+			const publisherName = comic.publisher?.name || "Unknown Publisher";
+
+			// Check other fields as well, provide fallbacks if necessary
+			const comicData = {
+				id: comic.id,
+				title: comic.name || "Unknown Title",
+				issue_number: comic.issue_number || "N/A",
+				description: comic.description || "No description available.",
+				cover_image_url: comic.image.original_url || "",
+				publisher: publisherName,
+				release_date: comic.cover_date || null,
 				user_id: userId,
-			});
+			};
+
+			const response = await axios.post(
+				"http://localhost:5000/api/comics",
+				comicData
+			);
+
+			console.log("Server response:", response.data); // Debugging line to check server response
 		} catch (error) {
 			console.error("Error adding comic:", error);
 		}

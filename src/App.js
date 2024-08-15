@@ -20,8 +20,13 @@ const isAuthenticated = () => {
 	return !!localStorage.getItem("token");
 };
 
+const getUserId = () => {
+	return localStorage.getItem("userId");
+};
+
 function App() {
 	const [auth, setAuth] = useState(isAuthenticated());
+	const userId = getUserId();
 
 	useEffect(() => {
 		setAuth(isAuthenticated());
@@ -81,15 +86,21 @@ function App() {
 					/>
 					<Route
 						path="/add-comic"
-						element={auth ? <AddComic /> : <Navigate to="/login" />}
+						element={
+							auth ? <AddComic userId={userId} /> : <Navigate to="/login" />
+						}
 					/>
 					<Route
 						path="/collection"
-						element={auth ? <Collection /> : <Navigate to="/login" />}
+						element={
+							auth ? <Collection userId={userId} /> : <Navigate to="/login" />
+						}
 					/>
 					<Route
 						path="/wishlist"
-						element={auth ? <Wishlist /> : <Navigate to="/login" />}
+						element={
+							auth ? <Wishlist userId={userId} /> : <Navigate to="/login" />
+						}
 					/>
 					<Route
 						path="/comic/:id"

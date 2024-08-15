@@ -19,6 +19,7 @@ const Login = ({ setAuth }) => {
 				formData
 			);
 			localStorage.setItem("token", response.data.token);
+			localStorage.setItem("userId", response.data.id); // Save userId in localStorage
 			setAuth(true);
 			window.location.href = "/profile";
 		} catch (error) {
@@ -39,12 +40,14 @@ const Login = ({ setAuth }) => {
 				name="email"
 				placeholder="Email"
 				onChange={handleChange}
+				required
 			/>
 			<input
 				type="password"
 				name="password"
 				placeholder="Password"
 				onChange={handleChange}
+				required
 			/>
 			<button type="submit">Login</button>
 		</form>
