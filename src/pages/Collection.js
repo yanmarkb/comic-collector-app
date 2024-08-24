@@ -21,6 +21,19 @@ const Collection = ({ userId }) => {
 		fetchComics();
 	}, [userId]);
 
+	const handleDelete = async (comicId) => {
+		try {
+			await axios.delete(
+				`http://localhost:5000/api/collection/${userId}/${comicId}`
+			);
+			setComics((prevComics) =>
+				prevComics.filter((comic) => comic.id !== comicId)
+			);
+		} catch (error) {
+			console.error("Error deleting comic:", error);
+		}
+	};
+
 	// Helper function to format the issue number correctly
 	const formatIssueNumber = (issueNumber) => {
 		return issueNumber ? issueNumber.replace(/\D/g, "") : "N/A";
@@ -65,25 +78,13 @@ const Collection = ({ userId }) => {
 										{comic.title || "Unknown Title"} - Issue #
 										{formatIssueNumber(comic.issue_number)}
 									</h3>
+									<button
+										onClick={() => handleDelete(comic.id)}
+										className="delete-button">
+										Delete
+									</button>
 								</div>
 							))}
-							{/* Placeholder for the next comic in the series */}
-							{nextIssueNumber !== "N/A" && (
-								<div className="comic-item next-comic-placeholder">
-									<div
-										className="next-comic-overlay"
-										onClick={() =>
-											handleAddToCollection(seriesName, nextIssueNumber)
-										}>
-										<button className="add-to-collection-button">
-											Add to Collection
-										</button>
-									</div>
-									<h3>
-										{seriesName} - Issue #{nextIssueNumber}
-									</h3>
-								</div>
-							)}
 						</div>
 					</div>
 				);
