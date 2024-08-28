@@ -9,7 +9,6 @@ const Collection = ({ userId }) => {
 	const [collectionNumber, setCollectionNumber] = useState("");
 	const [collectionName, setCollectionName] = useState("");
 	const [libraryName, setLibraryName] = useState("");
-	const [isEditingLibrary, setIsEditingLibrary] = useState(false);
 	const [libraries, setLibraries] = useState([]);
 	const [newLibraryName, setNewLibraryName] = useState("");
 	const [showLibraryModal, setShowLibraryModal] = useState(false);
@@ -103,15 +102,7 @@ const Collection = ({ userId }) => {
 		setCollectionNumber(comic.collection_number || "");
 		setCollectionName(comic.collection_name || comic.title);
 		setLibraryName(comic.library_name || "");
-		setIsEditingLibrary(false);
-	};
-
-	const handleEditLibrary = (comic) => {
-		setEditingComic(comic);
-		setLibraryName(comic.library_name || "");
-		setIsEditingLibrary(true);
 		setShowEditLibraryModal(true);
-		setShowLibraryModal(false); // Ensure the other modal is closed
 	};
 
 	const handleSave = async () => {
@@ -211,6 +202,9 @@ const Collection = ({ userId }) => {
 								))}
 							</select>
 						</div>
+						<button onClick={() => handleEdit(comic)} className="edit-button">
+							<FaEdit />
+						</button>
 						<button
 							onClick={() => handleDeleteComic(comic.id)}
 							className="delete-button">
@@ -234,10 +228,6 @@ const Collection = ({ userId }) => {
 											alt={comic.title || "Unknown Title"}
 											className="comic-cover"
 										/>
-										<FaEdit
-											className="edit-icon"
-											onClick={() => handleEditLibrary(comic)}
-										/>
 										<div className="comic-info">
 											<h3>
 												{comic.collection_name ||
@@ -246,12 +236,13 @@ const Collection = ({ userId }) => {
 												- Issue #
 												{comic.collection_number ||
 													formatIssueNumber(comic.issue_number)}
-												<FaEdit
-													className="edit-icon"
-													onClick={() => handleEdit(comic)}
-												/>
 											</h3>
 										</div>
+										<button
+											onClick={() => handleEdit(comic)}
+											className="edit-button">
+											<FaEdit />
+										</button>
 										<button
 											onClick={() => handleDeleteComic(comic.id)}
 											className="delete-button">
@@ -266,10 +257,25 @@ const Collection = ({ userId }) => {
 					</div>
 				);
 			})}
-
-			{editingComic && showEditLibraryModal && (
+			{showEditLibraryModal && editingComic && (
 				<div className="edit-modal">
-					<h2>Edit Comic's Library</h2>
+					<h2>Edit Comic</h2>
+					<label>
+						Collection Name:
+						<input
+							type="text"
+							value={collectionName}
+							onChange={(e) => setCollectionName(e.target.value)}
+						/>
+					</label>
+					<label>
+						Collection Number:
+						<input
+							type="text"
+							value={collectionNumber}
+							onChange={(e) => setCollectionNumber(e.target.value)}
+						/>
+					</label>
 					<label>
 						Select Library:
 						<select
@@ -293,8 +299,7 @@ const Collection = ({ userId }) => {
 					</button>
 				</div>
 			)}
-
-			{!showEditLibraryModal && showLibraryModal && (
+			{showLibraryModal && (
 				<div className="edit-modal">
 					<h2>Create New Library</h2>
 					<label>
@@ -315,7 +320,6 @@ const Collection = ({ userId }) => {
 					</button>
 				</div>
 			)}
-
 			{showDeleteModal && (
 				<div className="delete-modal">
 					<h2>Delete a Library</h2>

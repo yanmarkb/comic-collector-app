@@ -15,6 +15,7 @@ import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
 import ComicDetails from "./pages/ComicDetails";
 import { logout } from "./services/authService";
+import "./App.css"; // Import the CSS file
 
 const isAuthenticated = () => {
 	return !!localStorage.getItem("token");
@@ -40,7 +41,7 @@ function App() {
 	return (
 		<Router>
 			<div>
-				<nav>
+				<nav className="navbar">
 					<ul>
 						<li>
 							<Link to="/">Home</Link>
@@ -69,12 +70,10 @@ function App() {
 								<li>
 									<Link to="/wishlist">Wishlist</Link>
 								</li>
-								<li>
-									<button onClick={handleLogout}>Logout</button>
-								</li>
 							</>
 						)}
 					</ul>
+					{auth && <button onClick={handleLogout}>Logout</button>}
 				</nav>
 				<Routes>
 					<Route path="/" element={<Home />} />
