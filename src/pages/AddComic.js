@@ -72,6 +72,13 @@ const AddComic = ({ userId }) => {
 		setPage((prevPage) => prevPage + 1);
 	};
 
+	React.useEffect(() => {
+		if (page > 1) {
+			handleSearch();
+		}
+		// eslint-disable-next-line
+	}, [page]);
+
 	const handleSearchButtonClick = () => {
 		setPage(1);
 		handleSearch(true);

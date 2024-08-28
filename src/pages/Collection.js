@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Collection.css";
-import { FaEdit, FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus, FaMinus } from "react-icons/fa";
 
 const Collection = ({ userId }) => {
 	const [comics, setComics] = useState([]);
@@ -13,6 +13,27 @@ const Collection = ({ userId }) => {
 	const [libraries, setLibraries] = useState([]);
 	const [newLibraryName, setNewLibraryName] = useState("");
 	const [showLibraryModal, setShowLibraryModal] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showEditLibraryModal, setShowEditLibraryModal] = useState(false);
+
+	const emptyLibraryPhrases = [
+		"Great Scott! No Comics in this Multiverse...",
+		"Holy Empty Shelves, Batman! No Comics Here...",
+		"With Great Power Comes... No Comics Here?",
+		"No Comics Found, Bub! Keep Searching...",
+		"It's Clobberin' Time... to Admit There's No Comics Here!",
+		"By Odin's Beard! The Comics Are Gone!",
+		"Up, Up, and Away... But No Comics Today!",
+		"Excelsior! But Sadly, No Comics Here...",
+		"Avengers Assemble... After Finding Some Comics!",
+		"This Looks Like a Job for... More Comics!",
+	];
+
+	const getRandomPhrase = () => {
+		return emptyLibraryPhrases[
+			Math.floor(Math.random() * emptyLibraryPhrases.length)
+		];
+	};
 
 	useEffect(() => {
 		const fetchComics = async () => {
@@ -55,7 +76,16 @@ const Collection = ({ userId }) => {
 		}
 	};
 
-	const handleDelete = async (comicId) => {
+	const handleDeleteLibrary = async (libraryId) => {
+		try {
+			await axios.delete(`http://localhost:5000/api/libraries/${libraryId}`);
+			setLibraries(libraries.filter((library) => library.id !== libraryId));
+		} catch (error) {
+			console.error("Error deleting library:", error);
+		}
+	};
+
+	const handleDeleteComic = async (comicId) => {
 		try {
 			await axios.delete(
 				`http://localhost:5000/api/collection/${userId}/${comicId}`
@@ -80,6 +110,8 @@ const Collection = ({ userId }) => {
 		setEditingComic(comic);
 		setLibraryName(comic.library_name || "");
 		setIsEditingLibrary(true);
+		setShowEditLibraryModal(true);
+		setShowLibraryModal(false); // Ensure the other modal is closed
 	};
 
 	const handleSave = async () => {
@@ -102,6 +134,7 @@ const Collection = ({ userId }) => {
 				)
 			);
 			setEditingComic(null);
+			setShowEditLibraryModal(false);
 		} catch (error) {
 			console.error("Error updating comic:", error);
 		}
@@ -141,11 +174,19 @@ const Collection = ({ userId }) => {
 			<h1>My Collection</h1>
 			<div className="top-bar">
 				<h2>Recently Added:</h2>
-				<button
-					className="add-library-button"
-					onClick={() => setShowLibraryModal(true)}>
-					<FaPlus />
-				</button>
+
+				<div className="action-buttons">
+					<button
+						className="add-library-button"
+						onClick={() => setShowLibraryModal(true)}>
+						<FaPlus />
+					</button>
+					<button
+						className="delete-library-button"
+						onClick={() => setShowDeleteModal(true)}>
+						<FaMinus />
+					</button>
+				</div>
 			</div>
 			<div className="recently-added-row">
 				{groupedComics["Recently Added"]?.map((comic) => (
@@ -171,106 +212,89 @@ const Collection = ({ userId }) => {
 							</select>
 						</div>
 						<button
-							onClick={() => handleDelete(comic.id)}
+							onClick={() => handleDeleteComic(comic.id)}
 							className="delete-button">
 							Delete
 						</button>
 					</div>
 				))}
 			</div>
-			{Object.keys(groupedComics).map((libraryName) => {
-				if (libraryName === "Recently Added") return null;
-				const libraryComics = groupedComics[libraryName];
-
+			<h2>Your Libraries:</h2>
+			{libraries.map((library) => {
+				const libraryComics = groupedComics[library.library_name] || [];
 				return (
-					<div key={libraryName} className="series-row">
-						<h2>{libraryName}</h2>
+					<div key={library.id} className="series-row">
+						<h2>{library.library_name}</h2>
 						<div className="comics-series-shelf">
-							{libraryComics.map((comic) => (
-								<div key={comic.id} className="comic-item">
-									<img
-										src={comic.cover_image_url}
-										alt={comic.title || "Unknown Title"}
-										className="comic-cover"
-									/>
-									<FaEdit
-										className="edit-icon"
-										onClick={() => handleEditLibrary(comic)}
-									/>
-									<div className="comic-info">
-										<h3>
-											{comic.collection_name || comic.title || "Unknown Title"}{" "}
-											- Issue #
-											{comic.collection_number ||
-												formatIssueNumber(comic.issue_number)}
-											<FaEdit
-												className="edit-icon"
-												onClick={() => handleEdit(comic)}
-											/>
-										</h3>
+							{libraryComics.length > 0 ? (
+								libraryComics.map((comic) => (
+									<div key={comic.id} className="comic-item">
+										<img
+											src={comic.cover_image_url}
+											alt={comic.title || "Unknown Title"}
+											className="comic-cover"
+										/>
+										<FaEdit
+											className="edit-icon"
+											onClick={() => handleEditLibrary(comic)}
+										/>
+										<div className="comic-info">
+											<h3>
+												{comic.collection_name ||
+													comic.title ||
+													"Unknown Title"}{" "}
+												- Issue #
+												{comic.collection_number ||
+													formatIssueNumber(comic.issue_number)}
+												<FaEdit
+													className="edit-icon"
+													onClick={() => handleEdit(comic)}
+												/>
+											</h3>
+										</div>
+										<button
+											onClick={() => handleDeleteComic(comic.id)}
+											className="delete-button">
+											Delete
+										</button>
 									</div>
-									<button
-										onClick={() => handleDelete(comic.id)}
-										className="delete-button">
-										Delete
-									</button>
-								</div>
-							))}
+								))
+							) : (
+								<p>{getRandomPhrase()}</p>
+							)}
 						</div>
 					</div>
 				);
 			})}
-			<h2>Your Libraries</h2>
-			<div className="library-list">
-				{libraries.map((library) => (
-					<div key={library.id} className="library-row">
-						<h3>{library.library_name}</h3>
-					</div>
-				))}
-			</div>
-			{editingComic && (
+
+			{editingComic && showEditLibraryModal && (
 				<div className="edit-modal">
-					<h2>Edit Comic</h2>
-					{isEditingLibrary ? (
-						<label>
-							Library Name:
-							<input
-								type="text"
-								value={libraryName}
-								onChange={(e) => setLibraryName(e.target.value)}
-							/>
-						</label>
-					) : (
-						<>
-							<label>
-								Collection Name:
-								<input
-									type="text"
-									value={collectionName}
-									onChange={(e) => setCollectionName(e.target.value)}
-								/>
-							</label>
-							<label>
-								Collection Number:
-								<input
-									type="text"
-									value={collectionNumber}
-									onChange={(e) => setCollectionNumber(e.target.value)}
-								/>
-							</label>
-						</>
-					)}
+					<h2>Edit Comic's Library</h2>
+					<label>
+						Select Library:
+						<select
+							value={libraryName}
+							onChange={(e) => setLibraryName(e.target.value)}>
+							<option value="">Select Library</option>
+							{libraries.map((library) => (
+								<option key={library.id} value={library.library_name}>
+									{library.library_name}
+								</option>
+							))}
+						</select>
+					</label>
 					<button onClick={handleSave} className="save-button">
 						Save
 					</button>
 					<button
-						onClick={() => setEditingComic(null)}
+						onClick={() => setShowEditLibraryModal(false)}
 						className="cancel-button">
 						Cancel
 					</button>
 				</div>
 			)}
-			{showLibraryModal && (
+
+			{!showEditLibraryModal && showLibraryModal && (
 				<div className="edit-modal">
 					<h2>Create New Library</h2>
 					<label>
@@ -288,6 +312,29 @@ const Collection = ({ userId }) => {
 						onClick={() => setShowLibraryModal(false)}
 						className="cancel-button">
 						Cancel
+					</button>
+				</div>
+			)}
+
+			{showDeleteModal && (
+				<div className="delete-modal">
+					<h2>Delete a Library</h2>
+					<ul>
+						{libraries.map((library) => (
+							<li key={library.id} className="library-delete-item">
+								<span>{library.library_name}</span>
+								<button
+									className="delete-button"
+									onClick={() => handleDeleteLibrary(library.id)}>
+									Delete
+								</button>
+							</li>
+						))}
+					</ul>
+					<button
+						className="cancel-button"
+						onClick={() => setShowDeleteModal(false)}>
+						Close
 					</button>
 				</div>
 			)}
