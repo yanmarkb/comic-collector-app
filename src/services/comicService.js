@@ -20,3 +20,17 @@ export const addComic = async (comic, userId) => {
 	);
 	return response.data;
 };
+
+const fetchComicDetails = async (comicVineId) => {
+	try {
+		const response = await axios.get(
+			`http://localhost:5000/api/comics/${comicVineId}`
+		);
+		return response.data;
+	} catch (error) {
+		console.error("Error fetching comic details:", error);
+		return null;
+	}
+};
+
+export default fetchComicDetails;

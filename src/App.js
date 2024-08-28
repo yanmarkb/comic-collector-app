@@ -59,16 +59,13 @@ function App() {
 						{auth && (
 							<>
 								<li>
-									<Link to="/profile">Profile</Link>
-								</li>
-								<li>
 									<Link to="/add-comic">Add Comic</Link>
 								</li>
 								<li>
 									<Link to="/collection">Collections</Link>
 								</li>
 								<li>
-									<Link to="/wishlist">Wishlist</Link>
+									<Link to="/profile">Profile</Link>
 								</li>
 							</>
 						)}

@@ -1,56 +1,123 @@
+/* Container for the comic search page */
 .comic-search-container {
-    text-align: center;
-    padding: 20px;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
 }
 
+/* Input field for searching comics */
 .search-input {
-    padding: 10px;
-    width: 50%;
-    font-size: 16px;
-    margin-bottom: 20px;
+  padding: 10px;
+  width: 50%;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
 }
 
+/* Button for initiating the search */
 .search-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+  padding: 12px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease;
+  width: 150px; 
+  margin: 10px;
 }
 
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+/* Container for displaying the comics */
 .comics-shelf {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 150px);
 }
 
+/* Individual comic item */
 .comic-item {
-    width: 200px; 
-    text-align: center;
-    margin: 10px;
+  width: 250px; 
+  text-align: center;
+  margin: 10px;
+  background: #222;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; 
 }
 
+.comic-item:hover {
+  transform: scale(1.05);
+}
+
+/* Comic cover image */
 .comic-cover {
-    width: 100%; 
-    height: auto; 
-    max-height: 300px; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+/* Button for adding a comic to the collection */
 .add-button {
-    padding: 10px 15px;
-    margin-top: 10px;
-    font-size: 14px;
-    cursor: pointer;
+  padding: 10px 15px;
+  margin-top: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #28a745;
+  color: white;
+  transition: background-color 0.3s ease;
+  width: 150px; /* Fixed width for consistency */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.add-button:hover {
+  background-color: #218838;
+}
+
+/* Container for pagination controls */
 .pagination-controls {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
+/* Button for loading more comics */
 .pagination-button {
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 16px;
-    cursor: pointer;
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease;
+  width: 150px; /* Fixed width for consistency */
+}
+
+.pagination-button:hover {
+  background-color: #0056b3;
 }

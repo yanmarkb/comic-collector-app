@@ -347,3 +347,5 @@ const Collection = ({ userId }) => {
 };
 
 export default Collection;
+
+// THIS IS WHERE YOU STOPPED ON 9/15/21. Make sure to finish the Collection Page

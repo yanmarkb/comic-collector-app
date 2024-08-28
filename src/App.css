@@ -85,3 +85,13 @@
 .navbar button:hover {
   background-color: #00cc00;
 }
+
+
+body, html {
+  overflow: hidden;
+}
+
+.comic-search-container.allow-scroll {
+  overflow-y: auto;
+  height: 100vh;
+}

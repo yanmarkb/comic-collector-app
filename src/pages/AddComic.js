@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ComicDetails from "./ComicDetails";
@@ -9,22 +9,42 @@ const AddComic = ({ userId }) => {
 	const [comics, setComics] = useState([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	const [selectedComic, setSelectedComic] = useState(null); // State for selected comic
+	const [selectedComic, setSelectedComic] = useState(null);
+	const [allowScroll, setAllowScroll] = useState(false);
+
+	useEffect(() => {
+		const storedComics = JSON.parse(localStorage.getItem("comics"));
+		const storedComicName = localStorage.getItem("comicName");
+
+		if (storedComics && storedComicName) {
+			setComics(storedComics);
+			setComicName(storedComicName);
+		}
+	}, []);
 
 	const handleSearch = async (reset = false) => {
 		try {
+			const excludeIds = comics.map((comic) => comic.id);
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${comicName}?page=${page}`
+				`http://localhost:5000/api/comics/search/${comicName}?page=${page}&excludeIds=${excludeIds.join(
+					","
+				)}`
 			);
 			const fetchedComics = response.data;
 
+			let updatedComics;
 			if (reset) {
-				setComics(fetchedComics);
+				updatedComics = fetchedComics;
+				setPage(1);
 				setHasMore(fetchedComics.length === 18);
 			} else {
-				setComics((prevComics) => [...prevComics, ...fetchedComics]);
+				updatedComics = [...comics, ...fetchedComics];
 				setHasMore(fetchedComics.length === 18);
 			}
+
+			setComics(updatedComics);
+			localStorage.setItem("comics", JSON.stringify(updatedComics));
+			localStorage.setItem("comicName", comicName);
 		} catch (error) {
 			console.error("Error fetching comics:", error);
 		}
@@ -39,13 +59,8 @@ const AddComic = ({ userId }) => {
 				return;
 			}
 
-			console.log("User ID:", userId); // Debugging line to check userId
-			console.log("Comic Data:", comic); // Debugging line to check comic data being sent
-
-			// Check if comic.publisher is defined, and use a fallback value if it's not
 			const publisherName = comic.publisher?.name || "Unknown Publisher";
 
-			// Check other fields as well, provide fallbacks if necessary
 			const comicData = {
 				id: comic.id,
 				title: comic.name || "Unknown Title",
@@ -62,7 +77,7 @@ const AddComic = ({ userId }) => {
 				comicData
 			);
 
-			console.log("Server response:", response.data); // Debugging line to check server response
+			console.log("Server response:", response.data);
 		} catch (error) {
 			console.error("Error adding comic:", error);
 		}
@@ -70,41 +85,43 @@ const AddComic = ({ userId }) => {
 
 	const handleShowMore = () => {
 		setPage((prevPage) => prevPage + 1);
+		setAllowScroll(true);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (page > 1) {
 			handleSearch();
 		}
-		// eslint-disable-next-line
 	}, [page]);
 
 	const handleSearchButtonClick = () => {
 		setPage(1);
 		handleSearch(true);
+		setAllowScroll(false);
 	};
 
 	const handleComicClick = (comic) => {
 		setSelectedComic(comic);
 	};
 
-	React.useEffect(() => {
-		if (page > 1) {
-			handleSearch();
+	const handleKeyPress = (event) => {
+		if (event.key === "Enter") {
+			handleSearchButtonClick();
 		}
-		// eslint-disable-next-line
-	}, [page]);
+	};
 
 	return (
-		<div className="comic-search-container">
+		<div
+			className={`comic-search-container ${allowScroll ? "allow-scroll" : ""}`}>
 			{selectedComic ? (
-				<ComicDetails comic={selectedComic} /> // Render ComicDetails if a comic is selected
+				<ComicDetails comic={selectedComic} />
 			) : (
 				<>
 					<input
 						type="text"
 						value={comicName}
 						onChange={(e) => setComicName(e.target.value)}
+						onKeyPress={handleKeyPress}
 						placeholder="Comic Name"
 						className="search-input"
 					/>
