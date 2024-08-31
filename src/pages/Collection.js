@@ -14,6 +14,7 @@ const Collection = ({ userId }) => {
 	const [showLibraryModal, setShowLibraryModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showEditLibraryModal, setShowEditLibraryModal] = useState(false);
+	const [hasLibraries, setHasLibraries] = useState(false); // New state variable
 
 	const emptyLibraryPhrases = [
 		"Great Scott! No Comics in this Multiverse...",
@@ -52,6 +53,7 @@ const Collection = ({ userId }) => {
 					`http://localhost:5000/api/libraries/${userId}`
 				);
 				setLibraries(response.data);
+				setHasLibraries(response.data.length > 0); // Update hasLibraries state
 			} catch (error) {
 				console.error("Error fetching libraries:", error);
 			}
@@ -60,6 +62,27 @@ const Collection = ({ userId }) => {
 		fetchComics();
 		fetchLibraries();
 	}, [userId]);
+
+	// New useEffect to handle overflow property
+	useEffect(() => {
+		const updateOverflow = () => {
+			if (hasLibraries) {
+				document.body.style.overflow = "auto";
+				document.documentElement.style.overflow = "auto";
+			} else {
+				document.body.style.overflow = "hidden";
+				document.documentElement.style.overflow = "hidden";
+			}
+		};
+
+		updateOverflow();
+
+		return () => {
+			// Reset overflow when component unmounts
+			document.body.style.overflow = "auto";
+			document.documentElement.style.overflow = "auto";
+		};
+	}, [hasLibraries]);
 
 	const handleCreateLibrary = async () => {
 		try {
@@ -70,6 +93,7 @@ const Collection = ({ userId }) => {
 			setLibraries([...libraries, response.data]);
 			setShowLibraryModal(false);
 			setNewLibraryName("");
+			setHasLibraries(true); // Update hasLibraries state
 		} catch (error) {
 			console.error("Error creating library:", error);
 		}
@@ -78,7 +102,11 @@ const Collection = ({ userId }) => {
 	const handleDeleteLibrary = async (libraryId) => {
 		try {
 			await axios.delete(`http://localhost:5000/api/libraries/${libraryId}`);
-			setLibraries(libraries.filter((library) => library.id !== libraryId));
+			const updatedLibraries = libraries.filter(
+				(library) => library.id !== libraryId
+			);
+			setLibraries(updatedLibraries);
+			setHasLibraries(updatedLibraries.length > 0); // Update hasLibraries state
 		} catch (error) {
 			console.error("Error deleting library:", error);
 		}
@@ -161,7 +189,10 @@ const Collection = ({ userId }) => {
 	};
 
 	return (
-		<div className="collection-container">
+		<div
+			className={`collection-container ${
+				hasLibraries ? "has-libraries" : "no-libraries"
+			}`}>
 			<h1>My Collection</h1>
 
 			{groupedComics["Recently Added"] &&
@@ -192,18 +223,6 @@ const Collection = ({ userId }) => {
 									/>
 									<div className="comic-info">
 										<h3>{comic.title || "Unknown Title"}</h3>
-										{/* <select
-											value={comic.library_name || ""}
-											onChange={(e) =>
-												handleAssignToLibrary(comic.id, e.target.value)
-											}>
-											<option value="">Select Library</option>
-											{libraries.map((library) => (
-												<option key={library.id} value={library.library_name}>
-													{library.library_name}
-												</option>
-											))}
-										</select> */}
 									</div>
 									<button
 										onClick={() => handleEdit(comic)}
