@@ -1,4 +1,7 @@
-/* Container for the comic search page */
+body, html {
+  overflow: hidden;
+}
+
 .comic-search-container {
   position: relative;
   height: 100vh;
@@ -9,7 +12,10 @@
   padding: 20px;
 }
 
-/* Input field for searching comics */
+.comic-search-container.scrollable {
+  overflow-y: hidden;
+}
+
 .search-input {
   padding: 10px;
   width: 50%;
@@ -21,7 +27,6 @@
   color: #fff;
 }
 
-/* Button for initiating the search */
 .search-button {
   padding: 12px 10px;
   font-size: 16px;
@@ -31,7 +36,7 @@
   background-color: #007bff;
   color: white;
   transition: background-color 0.3s ease;
-  width: 150px; 
+  width: 150px;
   margin: 10px;
 }
 
@@ -39,7 +44,6 @@
   background-color: #0056b3;
 }
 
-/* Container for displaying the comics */
 .comics-shelf {
   display: flex;
   flex-wrap: wrap;
@@ -49,9 +53,32 @@
   height: calc(100vh - 150px);
 }
 
-/* Individual comic item */
+.comics-shelf::-webkit-scrollbar {
+  width: 8px;
+}
+
+.comics-shelf::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 10px;
+}
+
+.comics-shelf::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+.comics-shelf::-webkit-scrollbar-thumb:hover {
+  background-color: #0056b3;
+}
+
+.comics-shelf {
+  scrollbar-width: thin;
+  scrollbar-color: #007bff #333;
+}
+
 .comic-item {
-  width: 250px; 
+  width: 250px;
   text-align: center;
   margin: 10px;
   background: #222;
@@ -62,14 +89,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
 }
 
 .comic-item:hover {
   transform: scale(1.05);
 }
 
-/* Comic cover image */
 .comic-cover {
   width: 100%;
   height: auto;
@@ -78,7 +104,6 @@
   cursor: pointer;
 }
 
-/* Button for adding a comic to the collection */
 .add-button {
   padding: 10px 15px;
   margin-top: 10px;
@@ -89,22 +114,18 @@
   background-color: #28a745;
   color: white;
   transition: background-color 0.3s ease;
-  width: 150px; /* Fixed width for consistency */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 150px;
 }
 
 .add-button:hover {
   background-color: #218838;
 }
 
-/* Container for pagination controls */
 .pagination-controls {
   margin-top: 20px;
+  text-align: center;
 }
 
-/* Button for loading more comics */
 .pagination-button {
   padding: 10px 20px;
   margin: 5px;
@@ -115,7 +136,7 @@
   background-color: #007bff;
   color: white;
   transition: background-color 0.3s ease;
-  width: 150px; /* Fixed width for consistency */
+  width: 150px;
 }
 
 .pagination-button:hover {

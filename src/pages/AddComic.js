@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ComicDetails from "./ComicDetails";
@@ -10,41 +10,22 @@ const AddComic = ({ userId }) => {
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [selectedComic, setSelectedComic] = useState(null);
-	const [allowScroll, setAllowScroll] = useState(false);
-
-	useEffect(() => {
-		const storedComics = JSON.parse(localStorage.getItem("comics"));
-		const storedComicName = localStorage.getItem("comicName");
-
-		if (storedComics && storedComicName) {
-			setComics(storedComics);
-			setComicName(storedComicName);
-		}
-	}, []);
+	const [searchPerformed, setSearchPerformed] = useState(false);
 
 	const handleSearch = async (reset = false) => {
 		try {
-			const excludeIds = comics.map((comic) => comic.id);
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${comicName}?page=${page}&excludeIds=${excludeIds.join(
-					","
-				)}`
+				`http://localhost:5000/api/comics/search/${comicName}?page=${page}`
 			);
 			const fetchedComics = response.data;
 
-			let updatedComics;
 			if (reset) {
-				updatedComics = fetchedComics;
-				setPage(1);
-				setHasMore(fetchedComics.length === 18);
+				setComics(fetchedComics);
 			} else {
-				updatedComics = [...comics, ...fetchedComics];
-				setHasMore(fetchedComics.length === 18);
+				setComics((prevComics) => [...prevComics, ...fetchedComics]);
 			}
-
-			setComics(updatedComics);
-			localStorage.setItem("comics", JSON.stringify(updatedComics));
-			localStorage.setItem("comicName", comicName);
+			setHasMore(fetchedComics.length === 18);
+			setSearchPerformed(true);
 		} catch (error) {
 			console.error("Error fetching comics:", error);
 		}
@@ -85,19 +66,18 @@ const AddComic = ({ userId }) => {
 
 	const handleShowMore = () => {
 		setPage((prevPage) => prevPage + 1);
-		setAllowScroll(true);
 	};
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (page > 1) {
 			handleSearch();
 		}
+		// eslint-disable-next-line
 	}, [page]);
 
 	const handleSearchButtonClick = () => {
 		setPage(1);
 		handleSearch(true);
-		setAllowScroll(false);
 	};
 
 	const handleComicClick = (comic) => {
@@ -112,7 +92,9 @@ const AddComic = ({ userId }) => {
 
 	return (
 		<div
-			className={`comic-search-container ${allowScroll ? "allow-scroll" : ""}`}>
+			className={`comic-search-container ${
+				searchPerformed ? "scrollable" : ""
+			}`}>
 			{selectedComic ? (
 				<ComicDetails comic={selectedComic} />
 			) : (
@@ -121,40 +103,44 @@ const AddComic = ({ userId }) => {
 						type="text"
 						value={comicName}
 						onChange={(e) => setComicName(e.target.value)}
-						onKeyPress={handleKeyPress}
 						placeholder="Comic Name"
 						className="search-input"
+						onKeyPress={handleKeyPress} // Add key press event handler
 					/>
 					<button onClick={handleSearchButtonClick} className="search-button">
 						Search
 					</button>
 
-					<div className="comics-shelf">
-						{comics.length > 0 &&
-							comics.map((comic, index) => (
-								<div key={index} className="comic-item">
-									<Link to="#" onClick={() => handleComicClick(comic)}>
-										<img
-											src={comic.image.original_url}
-											alt={comic.name}
-											className="comic-cover"
-										/>
-									</Link>
-									<h3>{comic.name}</h3>
+					{searchPerformed && (
+						<div className="comics-shelf">
+							{comics.length > 0 &&
+								comics.map((comic, index) => (
+									<div key={index} className="comic-item">
+										<Link to="#" onClick={() => handleComicClick(comic)}>
+											<img
+												src={comic.image.original_url}
+												alt={comic.name}
+												className="comic-cover"
+											/>
+										</Link>
+										{/* <h3>{comic.name}</h3> */}
+										<button
+											onClick={() => handleAdd(comic)}
+											className="add-button">
+											Add to Collection
+										</button>
+									</div>
+								))}
+
+							{hasMore && (
+								<div className="pagination-controls">
 									<button
-										onClick={() => handleAdd(comic)}
-										className="add-button">
-										Add to Collection
+										onClick={handleShowMore}
+										className="pagination-button">
+										Show More...
 									</button>
 								</div>
-							))}
-					</div>
-
-					{hasMore && comics.length > 0 && (
-						<div className="pagination-controls">
-							<button onClick={handleShowMore} className="pagination-button">
-								Show More...
-							</button>
+							)}
 						</div>
 					)}
 				</>
