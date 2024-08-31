@@ -15,9 +15,20 @@ body, html {
   overflow-y: hidden;
 }
 
-/* Initial scrolling comics rows */
-.comic-row {
-  /* position: absolute; */
+/* Background scrolling comics */
+.background-comics {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0; /* Ensure it's in the background */
+  overflow: hidden;
+}
+
+/* Initial scrolling comics rows inside background-comics */
+.background-comics .comic-row {
+  position: absolute; /* Position absolutely within background-comics */
   white-space: nowrap;
   height: 33.33%;
   width: 200%;
@@ -25,24 +36,23 @@ body, html {
   align-items: center;
   overflow: hidden;
   animation: scroll-right linear infinite;
-  top: 0;
 }
 
-.comic-row img {
+.background-comics .comic-row img {
   height: 100%;
   width: auto;
   margin: 0 10px;
 }
 
-.comic-row:nth-child(1) {
+.background-comics .comic-row:nth-child(1) {
   top: 0;
 }
 
-.comic-row:nth-child(2) {
+.background-comics .comic-row:nth-child(2) {
   top: 33.33%;
 }
 
-.comic-row:nth-child(3) {
+.background-comics .comic-row:nth-child(3) {
   top: 66.66%;
 }
 
@@ -53,6 +63,17 @@ body, html {
   to {
     transform: translateX(-50%);
   }
+}
+
+/* Foreground content */
+.foreground-content {
+  position: relative;
+  z-index: 1; /* Ensure it's above the background comics */
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Search and results styles */
@@ -69,6 +90,7 @@ body, html {
 }
 
 .search-button {
+  position: absolute;
   padding: 12px 10px;
   font-size: 16px;
   cursor: pointer;
@@ -79,6 +101,8 @@ body, html {
   transition: background-color 0.3s ease;
   width: 150px;
   margin: 10px;
+  top: 20px;
+  right: 275px;
 }
 
 .search-button:hover {
@@ -182,4 +206,54 @@ body, html {
 
 .pagination-button:hover {
   background-color: #0056b3;
+}
+
+/* Auth container styles */
+.auth-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000; /* Ensure it's above everything */
+  color: #fff;
+  width: 300px;
+  text-align: center;
+}
+
+.auth-container input {
+  width: 94%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.auth-container button {
+  width: 101%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.auth-container button:hover {
+  background-color: #0056b3;
+}
+
+.toggle-auth-button {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.toggle-auth-button:hover {
+  text-decoration: underline;
 }

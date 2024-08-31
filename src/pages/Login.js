@@ -19,17 +19,11 @@ const Login = ({ setAuth }) => {
 				formData
 			);
 			localStorage.setItem("token", response.data.token);
-			localStorage.setItem("userId", response.data.id); // Save userId in localStorage
+			localStorage.setItem("userId", response.data.id);
 			setAuth(true);
-			window.location.href = "/profile";
+			window.location.href = "/";
 		} catch (error) {
-			if (error.response) {
-				console.error("Error during login:", error.response.data);
-			} else if (error.request) {
-				console.error("No response received:", error.request);
-			} else {
-				console.error("Error setting up request:", error.message);
-			}
+			console.error("Error during login:", error);
 		}
 	};
 

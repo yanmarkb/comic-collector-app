@@ -3,10 +3,12 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import ComicDetails from "./ComicDetails";
 import Loading from "./Loading";
+import Register from "./Register";
+import Login from "./Login";
 import "./Home.css";
 import { fetchComics } from "../services/comicVineService";
 
-const Home = ({ userId }) => {
+const Home = () => {
 	const [comics, setComics] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [comicName, setComicName] = useState("");
@@ -14,20 +16,21 @@ const Home = ({ userId }) => {
 	const [hasMore, setHasMore] = useState(true);
 	const [selectedComic, setSelectedComic] = useState(null);
 	const [searchPerformed, setSearchPerformed] = useState(false);
+	const [auth, setAuth] = useState(!!localStorage.getItem("token")); // Check if user is authenticated
+	const [showLogin, setShowLogin] = useState(false);
 
 	// Fetch initial comics on component mount
 	useEffect(() => {
 		const getComics = async () => {
-			setLoading(true); // Show loading screen
-			const comicCovers = await fetchComics(); // Assuming fetchComics is used to fetch initial comics
+			setLoading(true);
+			const comicCovers = await fetchComics();
 			setComics(shuffleArray(comicCovers));
-			setLoading(false); // Hide loading screen
+			setLoading(false);
 		};
 
 		getComics();
 	}, []);
 
-	// Shuffle the array of comics for initial display
 	const shuffleArray = (array) => {
 		for (let i = array.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
@@ -36,9 +39,8 @@ const Home = ({ userId }) => {
 		return array;
 	};
 
-	// Handle search functionality
 	const handleSearch = async (reset = false) => {
-		setLoading(true); // Show loading screen
+		setLoading(true);
 		try {
 			const response = await axios.get(
 				`http://localhost:5000/api/comics/search/${comicName}?page=${page}`
@@ -55,11 +57,10 @@ const Home = ({ userId }) => {
 		} catch (error) {
 			console.error("Error fetching comics:", error);
 		} finally {
-			setLoading(false); // Hide loading screen
+			setLoading(false);
 		}
 	};
 
-	// Handle adding a comic to the user's collection
 	const handleAdd = async (comic) => {
 		try {
 			const userId = localStorage.getItem("userId");
@@ -93,37 +94,35 @@ const Home = ({ userId }) => {
 		}
 	};
 
-	// Handle pagination for showing more comics
 	const handleShowMore = () => {
 		setPage((prevPage) => prevPage + 1);
 	};
 
-	// Fetch more comics when the page changes
 	useEffect(() => {
 		if (page > 1) {
 			handleSearch();
 		}
 	}, [page]);
 
-	// Handle search button click
 	const handleSearchButtonClick = () => {
 		setPage(1);
 		handleSearch(true);
 	};
 
-	// Handle comic click to show details
 	const handleComicClick = (comic) => {
 		setSelectedComic(comic);
 	};
 
-	// Handle enter key press for search
 	const handleKeyPress = (event) => {
 		if (event.key === "Enter") {
 			handleSearchButtonClick();
 		}
 	};
 
-	// Render a row of comics
+	const toggleLogin = () => {
+		setShowLogin(!showLogin);
+	};
+
 	const renderRow = (comics, speed) => (
 		<div className="comic-row" style={{ animationDuration: `${speed}s` }}>
 			{comics.concat(comics).map((comic, index) => (
@@ -132,67 +131,88 @@ const Home = ({ userId }) => {
 		</div>
 	);
 
-	// Render loading screen if data is being fetched
 	if (loading) {
 		return <Loading />;
 	}
 
 	return (
 		<div className={`home ${searchPerformed ? "scrollable" : ""}`}>
-			{selectedComic ? (
-				<ComicDetails comic={selectedComic} />
-			) : (
-				<>
-					<input
-						type="text"
-						value={comicName}
-						onChange={(e) => setComicName(e.target.value)}
-						placeholder="Comic Name"
-						className="search-input"
-						onKeyPress={handleKeyPress}
-					/>
-					<button onClick={handleSearchButtonClick} className="search-button">
-						Search
-					</button>
+			{/* Background scrolling comics */}
+			<div className="background-comics">
+				{renderRow(comics.slice(0, 10), 30)}
+				{renderRow(comics.slice(10, 20), 35)}
+				{renderRow(comics.slice(20, 30), 40)}
+			</div>
 
-					{searchPerformed ? (
-						<div className="comics-shelf">
-							{comics.length > 0 &&
-								comics.map((comic, index) => (
-									<div key={index} className="comic-item">
-										<Link to="#" onClick={() => handleComicClick(comic)}>
-											<img
-												src={comic.image.original_url}
-												alt={comic.name}
-												className="comic-cover"
-											/>
-										</Link>
-										<button
-											onClick={() => handleAdd(comic)}
-											className="add-button">
-											Add to Collection
-										</button>
-									</div>
-								))}
-							{hasMore && (
-								<div className="pagination-controls">
-									<button
-										onClick={handleShowMore}
-										className="pagination-button">
-										Show More...
-									</button>
-								</div>
-							)}
-						</div>
+			{/* Foreground content */}
+			<div className="foreground-content">
+				{auth ? (
+					selectedComic ? (
+						<ComicDetails comic={selectedComic} />
 					) : (
 						<>
-							{renderRow(comics.slice(0, 10), 30)}
-							{renderRow(comics.slice(10, 20), 35)}
-							{renderRow(comics.slice(20, 30), 40)}
+							<input
+								type="text"
+								value={comicName}
+								onChange={(e) => setComicName(e.target.value)}
+								placeholder="Comic Name"
+								className="search-input"
+								onKeyPress={handleKeyPress}
+							/>
+							<button
+								onClick={handleSearchButtonClick}
+								className="search-button">
+								Search
+							</button>
+
+							{searchPerformed ? (
+								<div className="comics-shelf">
+									{comics.length > 0 &&
+										comics.map((comic, index) => (
+											<div key={index} className="comic-item">
+												<Link to="#" onClick={() => handleComicClick(comic)}>
+													<img
+														src={comic.image.original_url}
+														alt={comic.name}
+														className="comic-cover"
+													/>
+												</Link>
+												<button
+													onClick={() => handleAdd(comic)}
+													className="add-button">
+													Add to Collection
+												</button>
+											</div>
+										))}
+									{hasMore && (
+										<div className="pagination-controls">
+											<button
+												onClick={handleShowMore}
+												className="pagination-button">
+												Show More...
+											</button>
+										</div>
+									)}
+								</div>
+							) : // Optionally, display something when search is not performed
+							null}
 						</>
-					)}
-				</>
-			)}
+					)
+				) : (
+					<div className="auth-container">
+						{showLogin ? (
+							<Login setAuth={setAuth} />
+						) : (
+							<Register setAuth={setAuth} />
+						)}
+						<button onClick={toggleLogin} className="toggle-auth-button">
+							{showLogin
+								? "Not a user? Register here"
+								: "Already a user? Log in here"}
+						</button>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
