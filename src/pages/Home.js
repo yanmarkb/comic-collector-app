@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ComicDetails from "./ComicDetails";
@@ -17,6 +17,8 @@ const Home = ({ userId, comicName }) => {
 	const [searchPerformed, setSearchPerformed] = useState(false);
 	const [auth, setAuth] = useState(!!localStorage.getItem("token"));
 	const [showLogin, setShowLogin] = useState(false);
+	const [searchQuery, setSearchQuery] = useState(comicName || "");
+	const searchTimeoutRef = useRef(null);
 
 	// Fetch initial comics or search comics on component mount
 	useEffect(() => {
@@ -31,7 +33,22 @@ const Home = ({ userId, comicName }) => {
 			setLoading(false);
 		};
 
-		getComics();
+		const delaySearch = () => {
+			if (searchTimeoutRef.current) {
+				clearTimeout(searchTimeoutRef.current);
+			}
+			searchTimeoutRef.current = setTimeout(() => {
+				getComics();
+			}, 2000);
+		};
+
+		delaySearch();
+
+		return () => {
+			if (searchTimeoutRef.current) {
+				clearTimeout(searchTimeoutRef.current);
+			}
+		};
 	}, [comicName]); // Only re-fetch when comicName changes
 
 	const shuffleArray = (array) => {
@@ -42,11 +59,11 @@ const Home = ({ userId, comicName }) => {
 		return array;
 	};
 
-	const handleSearch = async (reset = false, searchQuery = "") => {
+	const handleSearch = async (reset = false, query = "") => {
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${searchQuery}?page=${page}`
+				`http://localhost:5000/api/comics/search/${query}?page=${page}`
 			);
 			const fetchedComics = response.data;
 
@@ -101,7 +118,7 @@ const Home = ({ userId, comicName }) => {
 
 	useEffect(() => {
 		if (page > 1) {
-			handleSearch(false, comicName);
+			handleSearch(false, searchQuery);
 		}
 	}, [page]);
 
@@ -111,6 +128,26 @@ const Home = ({ userId, comicName }) => {
 
 	const toggleLogin = () => {
 		setShowLogin(!showLogin);
+	};
+
+	const handleSearchButtonClick = () => {
+		handleSearch(true, searchQuery);
+	};
+
+	const handleKeyDown = (event) => {
+		if (event.key === "Enter") {
+			handleSearch(true, searchQuery);
+		}
+	};
+
+	const handleInputChange = (e) => {
+		setSearchQuery(e.target.value);
+		if (searchTimeoutRef.current) {
+			clearTimeout(searchTimeoutRef.current);
+		}
+		searchTimeoutRef.current = setTimeout(() => {
+			handleSearch(true, e.target.value);
+		}, 2000);
 	};
 
 	const renderRow = (comics, speed) => (
