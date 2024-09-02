@@ -51,7 +51,8 @@ body, html {
   justify-content: center;
   gap: 20px;
   overflow-y: auto;
-  height: calc(100vh - 150px);
+  margin-top: 50px;
+  height: calc(100vh - 86px);
 }
 
 .comics-shelf::-webkit-scrollbar {

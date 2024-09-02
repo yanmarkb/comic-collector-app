@@ -28,6 +28,8 @@ const getUserId = () => {
 function App() {
 	const [auth, setAuth] = useState(isAuthenticated());
 	const userId = getUserId();
+	const [searchQuery, setSearchQuery] = useState("");
+	const [comicName, setComicName] = useState("");
 
 	useEffect(() => {
 		setAuth(isAuthenticated());
@@ -36,6 +38,16 @@ function App() {
 	const handleLogout = () => {
 		logout();
 		setAuth(false);
+	};
+
+	const handleSearchButtonClick = () => {
+		setComicName(searchQuery); // Update the comicName only on button click
+	};
+
+	const handleKeyDown = (event) => {
+		if (event.key === "Enter") {
+			setComicName(searchQuery); // Update the comicName only on Enter key press
+		}
 	};
 
 	return (
@@ -48,16 +60,6 @@ function App() {
 								Home
 							</Link>
 						</li>
-						{/* {!auth && (
-							<>
-								<li>
-									<Link to="/register">Register</Link>
-								</li>
-								<li>
-									<Link to="/login">Login</Link>
-								</li>
-							</>
-						)} */}
 						{auth && (
 							<>
 								<li>
@@ -69,22 +71,32 @@ function App() {
 							</>
 						)}
 					</ul>
+					<div className="search-bar">
+						<input
+							type="text"
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)} // Just update the local query
+							placeholder="Comic Name"
+							className="navbar-search-input"
+							onKeyDown={handleKeyDown} // Trigger search only on Enter key
+						/>
+						<button
+							onClick={handleSearchButtonClick} // Trigger search only on button click
+							className="navbar-search-button">
+							Search
+						</button>
+					</div>
 					{auth && <button onClick={handleLogout}>Logout</button>}
 				</nav>
 				<Routes>
-					<Route path="/" element={<Home userId={userId} />} />
-					{/* <Route path="/register" element={<Register setAuth={setAuth} />} />
-					<Route path="/login" element={<Login setAuth={setAuth} />} /> */}
+					<Route
+						path="/"
+						element={<Home userId={userId} comicName={comicName} />}
+					/>
 					<Route
 						path="/profile"
 						element={auth ? <Profile /> : <Navigate to="/login" />}
 					/>
-					{/* <Route
-						path="/add-comic"
-						element={
-							auth ? <AddComic userId={userId} /> : <Navigate to="/login" />
-						}
-					/> */}
 					<Route
 						path="/collection"
 						element={

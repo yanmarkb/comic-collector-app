@@ -8,28 +8,31 @@ import Login from "./Login";
 import "./Home.css";
 import { fetchComics } from "../services/comicVineService";
 
-const Home = () => {
+const Home = ({ userId, comicName }) => {
 	const [comics, setComics] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [comicName, setComicName] = useState("");
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [selectedComic, setSelectedComic] = useState(null);
 	const [searchPerformed, setSearchPerformed] = useState(false);
-	const [auth, setAuth] = useState(!!localStorage.getItem("token")); // Check if user is authenticated
+	const [auth, setAuth] = useState(!!localStorage.getItem("token"));
 	const [showLogin, setShowLogin] = useState(false);
 
-	// Fetch initial comics on component mount
+	// Fetch initial comics or search comics on component mount
 	useEffect(() => {
 		const getComics = async () => {
 			setLoading(true);
-			const comicCovers = await fetchComics();
-			setComics(shuffleArray(comicCovers));
+			if (comicName) {
+				await handleSearch(true, comicName);
+			} else {
+				const comicCovers = await fetchComics();
+				setComics(shuffleArray(comicCovers));
+			}
 			setLoading(false);
 		};
 
 		getComics();
-	}, []);
+	}, [comicName]); // Only re-fetch when comicName changes
 
 	const shuffleArray = (array) => {
 		for (let i = array.length - 1; i > 0; i--) {
@@ -39,11 +42,11 @@ const Home = () => {
 		return array;
 	};
 
-	const handleSearch = async (reset = false) => {
+	const handleSearch = async (reset = false, searchQuery = "") => {
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${comicName}?page=${page}`
+				`http://localhost:5000/api/comics/search/${searchQuery}?page=${page}`
 			);
 			const fetchedComics = response.data;
 
@@ -63,8 +66,6 @@ const Home = () => {
 
 	const handleAdd = async (comic) => {
 		try {
-			const userId = localStorage.getItem("userId");
-
 			if (!userId) {
 				console.error("User ID is missing, cannot add comic.");
 				return;
@@ -100,23 +101,12 @@ const Home = () => {
 
 	useEffect(() => {
 		if (page > 1) {
-			handleSearch();
+			handleSearch(false, comicName);
 		}
 	}, [page]);
 
-	const handleSearchButtonClick = () => {
-		setPage(1);
-		handleSearch(true);
-	};
-
 	const handleComicClick = (comic) => {
 		setSelectedComic(comic);
-	};
-
-	const handleKeyPress = (event) => {
-		if (event.key === "Enter") {
-			handleSearchButtonClick();
-		}
 	};
 
 	const toggleLogin = () => {
@@ -153,20 +143,6 @@ const Home = () => {
 						<ComicDetails comic={selectedComic} />
 					) : (
 						<>
-							<input
-								type="text"
-								value={comicName}
-								onChange={(e) => setComicName(e.target.value)}
-								placeholder="Comic Name"
-								className="search-input"
-								onKeyPress={handleKeyPress}
-							/>
-							<button
-								onClick={handleSearchButtonClick}
-								className="search-button">
-								Search
-							</button>
-
 							{searchPerformed ? (
 								<div className="comics-shelf">
 									{comics.length > 0 &&
@@ -196,8 +172,7 @@ const Home = () => {
 										</div>
 									)}
 								</div>
-							) : // Optionally, display something when search is not performed
-							null}
+							) : null}
 						</>
 					)
 				) : (
