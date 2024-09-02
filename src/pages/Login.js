@@ -20,6 +20,8 @@ const Login = ({ setAuth }) => {
 			);
 			localStorage.setItem("token", response.data.token);
 			localStorage.setItem("userId", response.data.id);
+			localStorage.setItem("username", response.data.username);
+			localStorage.setItem("email", response.data.email);
 			setAuth(true);
 			window.location.href = "/";
 		} catch (error) {

@@ -41,12 +41,12 @@ function App() {
 	};
 
 	const handleSearchButtonClick = () => {
-		setComicName(searchQuery); // Update the comicName only on button click
+		setComicName(searchQuery);
 	};
 
 	const handleKeyDown = (event) => {
 		if (event.key === "Enter") {
-			setComicName(searchQuery); // Update the comicName only on Enter key press
+			setComicName(searchQuery);
 		}
 	};
 
@@ -75,13 +75,13 @@ function App() {
 						<input
 							type="text"
 							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)} // Just update the local query
+							onChange={(e) => setSearchQuery(e.target.value)}
 							placeholder="Comic Name"
 							className="navbar-search-input"
-							onKeyDown={handleKeyDown} // Trigger search only on Enter key
+							onKeyDown={handleKeyDown}
 						/>
 						<button
-							onClick={handleSearchButtonClick} // Trigger search only on button click
+							onClick={handleSearchButtonClick}
 							className="navbar-search-button">
 							Search
 						</button>
@@ -95,7 +95,9 @@ function App() {
 					/>
 					<Route
 						path="/profile"
-						element={auth ? <Profile /> : <Navigate to="/login" />}
+						element={
+							auth ? <Profile userId={userId} /> : <Navigate to="/login" />
+						}
 					/>
 					<Route
 						path="/collection"

@@ -1,0 +1,95 @@
+/* General body and html styling to match the collection page */
+body, html {
+    overflow: hidden;
+  }
+  
+  .profile-container {
+    padding: 20px;
+    text-align: center;
+    background: #000;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+  }
+  
+  .profile-container h1 {
+    font-size: 2.5em;
+    margin-top: 75px; /* To create space under the navbar */
+    margin-bottom: 40px;
+    color: #61dafb;
+  }
+  
+  .profile-container p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #007bff;
+  }
+  
+  .change-password-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin-bottom: 30px;
+  }
+  
+  .change-password-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .password-change-form {
+    margin-top: 20px;
+    text-align: left;
+    width: 100%;
+    max-width: 500px;
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .password-change-form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ddd;
+  }
+  
+  .password-change-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #ddd;
+  }
+  
+  .save-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .save-button:hover {
+    background-color: #218838;
+  }
+  
+  .message {
+    margin-top: 20px;
+    font-size: 1em;
+    color: red;
+  }
+  

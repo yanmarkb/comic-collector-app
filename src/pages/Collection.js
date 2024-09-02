@@ -15,6 +15,7 @@ const Collection = ({ userId }) => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showEditLibraryModal, setShowEditLibraryModal] = useState(false);
 	const [hasLibraries, setHasLibraries] = useState(false); // New state variable
+	const [emptyLibraryText, setEmptyLibraryText] = useState(""); // Fixed empty library text
 
 	const emptyLibraryPhrases = [
 		"Great Scott! No Comics in this Multiverse...",
@@ -61,6 +62,7 @@ const Collection = ({ userId }) => {
 
 		fetchComics();
 		fetchLibraries();
+		setEmptyLibraryText(getRandomPhrase()); // Set fixed empty library text on mount
 	}, [userId]);
 
 	// New useEffect to handle overflow property
@@ -172,6 +174,15 @@ const Collection = ({ userId }) => {
 		return acc;
 	}, {});
 
+	// Sort comics by issue number
+	for (const libraryName in groupedComics) {
+		groupedComics[libraryName].sort((a, b) => {
+			const issueNumberA = parseInt(a.collection_number || a.issue_number, 10);
+			const issueNumberB = parseInt(b.collection_number || b.issue_number, 10);
+			return issueNumberA - issueNumberB;
+		});
+	}
+
 	const handleAssignToLibrary = async (comicId, libraryName) => {
 		try {
 			await axios.put(
@@ -193,7 +204,7 @@ const Collection = ({ userId }) => {
 			className={`collection-container ${
 				hasLibraries ? "has-libraries" : "no-libraries"
 			}`}>
-			<h1>My Collection</h1>
+			<h1 className="my-collection">My Collection</h1>
 
 			{groupedComics["Recently Added"] &&
 				groupedComics["Recently Added"].length > 0 && (
@@ -280,7 +291,7 @@ const Collection = ({ userId }) => {
 											</div>
 										))
 									) : (
-										<p>{getRandomPhrase()}</p>
+										<p>{emptyLibraryText}</p>
 									)}
 								</div>
 							</div>
@@ -293,7 +304,7 @@ const Collection = ({ userId }) => {
 				<div className="edit-modal">
 					<h2>Edit Comic</h2>
 					<label>
-						Collection Name:
+						Comic Name:
 						<input
 							type="text"
 							value={collectionName}
@@ -301,7 +312,7 @@ const Collection = ({ userId }) => {
 						/>
 					</label>
 					<label>
-						Collection Number:
+						Issue/Volume Number:
 						<input
 							type="text"
 							value={collectionNumber}
