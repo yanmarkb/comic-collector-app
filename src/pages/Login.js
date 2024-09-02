@@ -29,6 +29,7 @@ const Login = ({ setAuth }) => {
 
 	return (
 		<form onSubmit={handleSubmit}>
+			<h3>Welcome back to Comic Collector!</h3>
 			<input
 				type="email"
 				name="email"

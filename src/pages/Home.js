@@ -138,11 +138,13 @@ const Home = () => {
 	return (
 		<div className={`home ${searchPerformed ? "scrollable" : ""}`}>
 			{/* Background scrolling comics */}
-			<div className="background-comics">
-				{renderRow(comics.slice(0, 10), 30)}
-				{renderRow(comics.slice(10, 20), 35)}
-				{renderRow(comics.slice(20, 30), 40)}
-			</div>
+			{!searchPerformed && (
+				<div className="background-comics">
+					{renderRow(comics.slice(0, 10), 30)}
+					{renderRow(comics.slice(10, 20), 35)}
+					{renderRow(comics.slice(20, 30), 40)}
+				</div>
+			)}
 
 			{/* Foreground content */}
 			<div className="foreground-content">

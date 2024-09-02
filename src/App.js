@@ -44,9 +44,11 @@ function App() {
 				<nav className="navbar">
 					<ul>
 						<li>
-							<Link to="/">Home</Link>
+							<Link to="/" onClick={() => (window.location.href = "/")}>
+								Home
+							</Link>
 						</li>
-						{!auth && (
+						{/* {!auth && (
 							<>
 								<li>
 									<Link to="/register">Register</Link>
@@ -55,7 +57,7 @@ function App() {
 									<Link to="/login">Login</Link>
 								</li>
 							</>
-						)}
+						)} */}
 						{auth && (
 							<>
 								<li>
@@ -71,8 +73,8 @@ function App() {
 				</nav>
 				<Routes>
 					<Route path="/" element={<Home userId={userId} />} />
-					<Route path="/register" element={<Register setAuth={setAuth} />} />
-					<Route path="/login" element={<Login setAuth={setAuth} />} />
+					{/* <Route path="/register" element={<Register setAuth={setAuth} />} />
+					<Route path="/login" element={<Login setAuth={setAuth} />} /> */}
 					<Route
 						path="/profile"
 						element={auth ? <Profile /> : <Navigate to="/login" />}

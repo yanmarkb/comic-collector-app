@@ -29,6 +29,8 @@ const Register = ({ setAuth }) => {
 
 	return (
 		<form onSubmit={handleSubmit}>
+			<h3>Welcome to Comic Collector!</h3>{" "}
+			<h4>Sign up to below to conitnue!</h4>
 			<input
 				type="text"
 				name="username"
