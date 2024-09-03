@@ -19,6 +19,7 @@ const Home = ({ userId, comicName }) => {
 	const [showLogin, setShowLogin] = useState(false);
 	const [searchQuery, setSearchQuery] = useState(comicName || "");
 	const searchTimeoutRef = useRef(null);
+	const isFetchingRef = useRef(false);
 
 	// Fetch initial comics or search comics on component mount
 	useEffect(() => {
@@ -39,7 +40,7 @@ const Home = ({ userId, comicName }) => {
 			}
 			searchTimeoutRef.current = setTimeout(() => {
 				getComics();
-			}, 1000);
+			}, 500);
 		};
 
 		delaySearch();
@@ -49,7 +50,7 @@ const Home = ({ userId, comicName }) => {
 				clearTimeout(searchTimeoutRef.current);
 			}
 		};
-	}, [comicName]); // Only re-fetch when comicName changes
+	}, [comicName]);
 
 	const shuffleArray = (array) => {
 		for (let i = array.length - 1; i > 0; i--) {
@@ -59,18 +60,27 @@ const Home = ({ userId, comicName }) => {
 		return array;
 	};
 
-	const handleSearch = async (reset = false, query = "") => {
+	const handleSearch = async (reset = false, query = "", pageNumber = 1) => {
+		if (isFetchingRef.current) return; // Prevent multiple API calls
+		isFetchingRef.current = true; // Set fetching flag to true
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${query}?page=${page}`
+				`http://localhost:5000/api/comics/search/${query}?page=${pageNumber}`
 			);
 			const fetchedComics = response.data;
 
 			if (reset) {
 				setComics(fetchedComics);
+				setPage(1); // Reset page to 1 on new search
+				setSearchQuery(query); // Save the search term
 			} else {
-				setComics((prevComics) => [...prevComics, ...fetchedComics]);
+				// Filter out duplicates
+				const newComics = fetchedComics.filter(
+					(comic) =>
+						!comics.some((existingComic) => existingComic.id === comic.id)
+				);
+				setComics((prevComics) => [...prevComics, ...newComics]);
 			}
 			setHasMore(fetchedComics.length === 18);
 			setSearchPerformed(true);
@@ -78,6 +88,7 @@ const Home = ({ userId, comicName }) => {
 			console.error("Error fetching comics:", error);
 		} finally {
 			setLoading(false);
+			isFetchingRef.current = false; // Reset fetching flag
 		}
 	};
 
@@ -113,12 +124,14 @@ const Home = ({ userId, comicName }) => {
 	};
 
 	const handleShowMore = () => {
-		setPage((prevPage) => prevPage + 1);
+		const nextPage = page + 1;
+		setPage(nextPage);
+		handleSearch(false, searchQuery, nextPage);
 	};
 
 	useEffect(() => {
 		if (page > 1) {
-			handleSearch(false, searchQuery);
+			handleSearch(false, searchQuery, page);
 		}
 	}, [page]);
 
