@@ -5,6 +5,7 @@ import ComicDetails from "./ComicDetails";
 import Loading from "./Loading";
 import Register from "./Register";
 import Login from "./Login";
+import WelcomePopup from "./WelcomePopup";
 import "./Home.css";
 import { fetchComics } from "../services/comicVineService";
 
@@ -17,6 +18,7 @@ const Home = ({ userId, comicName }) => {
 	const [searchPerformed, setSearchPerformed] = useState(false);
 	const [auth, setAuth] = useState(!!localStorage.getItem("token"));
 	const [showLogin, setShowLogin] = useState(false);
+	const [showWelcomePopup, setShowWelcomePopup] = useState(true);
 	const [searchQuery, setSearchQuery] = useState(comicName || "");
 	const searchTimeoutRef = useRef(null);
 	const isFetchingRef = useRef(false);
@@ -143,6 +145,10 @@ const Home = ({ userId, comicName }) => {
 		setSelectedComic(null);
 	};
 
+	const closePopup = () => {
+		setShowWelcomePopup(false);
+	};
+
 	const toggleLogin = () => {
 		setShowLogin(!showLogin);
 	};
@@ -250,6 +256,13 @@ const Home = ({ userId, comicName }) => {
 						</button>
 					</div>
 				)}
+				{/* Working on this */}
+				{/* {showWelcomePopup && (
+					<WelcomePopup
+						onClose={() => setShowWelcomePopup(false)}
+						onComicClick={(comic) => console.log(comic)}
+					/>
+				)} */}
 			</div>
 		</div>
 	);

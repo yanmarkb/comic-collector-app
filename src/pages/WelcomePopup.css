@@ -1,0 +1,55 @@
+.welcome-popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #222;
+	color: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	width: 300px;
+	text-align: center;
+}
+
+.welcome-popup-content h2 {
+	margin-bottom: 10px;
+}
+
+.welcome-popup-content p {
+	margin-bottom: 20px;
+}
+
+.random-comic-button,
+.close-popup-button {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	padding: 10px 15px;
+	margin: 5px;
+	cursor: pointer;
+	width: 100%;
+}
+
+.random-comic-button:hover,
+.close-popup-button:hover {
+	background-color: #0056b3;
+}
+
+.random-comic-thumbnail {
+	cursor: pointer;
+	margin: 20px auto;
+}
+
+.comic-thumbnail {
+	width: 100px;
+	height: auto;
+	border-radius: 5px;
+	transition: transform 0.3s ease;
+}
+
+.comic-thumbnail:hover {
+	transform: scale(1.1);
+}
