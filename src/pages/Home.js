@@ -139,6 +139,10 @@ const Home = ({ userId, comicName }) => {
 		setSelectedComic(comic);
 	};
 
+	const closeModal = () => {
+		setSelectedComic(null);
+	};
+
 	const toggleLogin = () => {
 		setShowLogin(!showLogin);
 	};
@@ -189,42 +193,49 @@ const Home = ({ userId, comicName }) => {
 			{/* Foreground content */}
 			<div className="foreground-content">
 				{auth ? (
-					selectedComic ? (
-						<ComicDetails comic={selectedComic} />
-					) : (
-						<>
-							{searchPerformed ? (
-								<div className="comics-shelf">
-									{comics.length > 0 &&
-										comics.map((comic, index) => (
-											<div key={index} className="comic-item">
-												<Link to="#" onClick={() => handleComicClick(comic)}>
-													<img
-														src={comic.image.original_url}
-														alt={comic.name}
-														className="comic-cover"
-													/>
-												</Link>
-												<button
-													onClick={() => handleAdd(comic)}
-													className="add-button">
-													Add to Collection
-												</button>
-											</div>
-										))}
-									{hasMore && (
-										<div className="pagination-controls">
+					<>
+						{selectedComic ? (
+							<div className="comic-details-modal">
+								<div
+									className="comic-details-overlay"
+									onClick={closeModal}></div>
+								<div className="comic-details-content">
+									<ComicDetails comic={selectedComic} onClose={closeModal} />
+								</div>
+							</div>
+						) : null}
+
+						{searchPerformed ? (
+							<div className="comics-shelf">
+								{comics.length > 0 &&
+									comics.map((comic, index) => (
+										<div key={index} className="comic-item">
+											<Link to="#" onClick={() => handleComicClick(comic)}>
+												<img
+													src={comic.image.original_url}
+													alt={comic.name}
+													className="comic-cover"
+												/>
+											</Link>
 											<button
-												onClick={handleShowMore}
-												className="pagination-button">
-												Show More...
+												onClick={() => handleAdd(comic)}
+												className="add-button">
+												Add to Collection
 											</button>
 										</div>
-									)}
-								</div>
-							) : null}
-						</>
-					)
+									))}
+								{hasMore && (
+									<div className="pagination-controls">
+										<button
+											onClick={handleShowMore}
+											className="pagination-button">
+											Show More...
+										</button>
+									</div>
+								)}
+							</div>
+						) : null}
+					</>
 				) : (
 					<div className="auth-container">
 						{showLogin ? (
