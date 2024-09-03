@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaPlus, FaMinus, FaEdit } from "react-icons/fa";
+import ComicDetails from "./ComicDetails";
 import "./Collection.css";
 
 const Collection = () => {
@@ -16,6 +17,7 @@ const Collection = () => {
 	const [showEditLibraryModal, setShowEditLibraryModal] = useState(false);
 	const [hasLibraries, setHasLibraries] = useState(false);
 	const [emptyLibraryText, setEmptyLibraryText] = useState("");
+	const [selectedComic, setSelectedComic] = useState(null);
 
 	const emptyLibraryPhrases = [
 		"Great Scott! No Comics in this Multiverse...",
@@ -196,6 +198,14 @@ const Collection = () => {
 		}
 	};
 
+	const handleComicClick = (comic) => {
+		setSelectedComic(comic);
+	};
+
+	const closeModal = () => {
+		setSelectedComic(null);
+	};
+
 	return (
 		<div
 			className={`collection-container ${
@@ -230,6 +240,7 @@ const Collection = () => {
 											comic.collection_name || comic.title || "Unknown Title"
 										}
 										className="comic-cover"
+										onClick={() => handleComicClick(comic)}
 									/>
 									<div className="comic-info">
 										<h3>
@@ -278,6 +289,7 @@ const Collection = () => {
 														"Unknown Title"
 													}
 													className="comic-cover"
+													onClick={() => handleComicClick(comic)}
 												/>
 												<div className="comic-info">
 													<h3>
@@ -401,6 +413,15 @@ const Collection = () => {
 						onClick={() => setShowDeleteModal(false)}>
 						Close
 					</button>
+				</div>
+			)}
+
+			{selectedComic && (
+				<div className="comic-details-modal">
+					<div className="comic-details-overlay" onClick={closeModal}></div>
+					<div className="comic-details-content">
+						<ComicDetails comic={selectedComic} onClose={closeModal} />
+					</div>
 				</div>
 			)}
 		</div>

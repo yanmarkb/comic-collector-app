@@ -8,8 +8,19 @@ const stripHtmlTags = (str) => {
 };
 
 const ComicDetails = ({ comic, onClose }) => {
-	if (!comic) {
-		return <div>No comic found.</div>;
+	// If the comic or comic.image is undefined, return a simple message
+	if (!comic || !comic.image) {
+		return (
+			<div className="comic-details-page">
+				<div className="comic-details-overlay" onClick={onClose}></div>
+				<div className="comic-details-container">
+					<p>No comic details available.</p>
+					<button className="close-modal-button" onClick={onClose}>
+						Close
+					</button>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -22,7 +33,7 @@ const ComicDetails = ({ comic, onClose }) => {
 				<div className="comic-details-content">
 					<img
 						src={comic.image.original_url}
-						alt={comic.name}
+						alt={comic.name || "Comic cover"}
 						className="comic-details-cover"
 					/>
 					<div className="comic-details-info">
