@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaPlus, FaMinus, FaEdit } from "react-icons/fa";
 import "./Collection.css";
-import { FaEdit, FaPlus, FaMinus } from "react-icons/fa";
 
-const Collection = ({ userId }) => {
+const Collection = () => {
 	const [comics, setComics] = useState([]);
 	const [editingComic, setEditingComic] = useState(null);
 	const [collectionNumber, setCollectionNumber] = useState("");
@@ -14,8 +14,8 @@ const Collection = ({ userId }) => {
 	const [showLibraryModal, setShowLibraryModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showEditLibraryModal, setShowEditLibraryModal] = useState(false);
-	const [hasLibraries, setHasLibraries] = useState(false); // New state variable
-	const [emptyLibraryText, setEmptyLibraryText] = useState(""); // Fixed empty library text
+	const [hasLibraries, setHasLibraries] = useState(false);
+	const [emptyLibraryText, setEmptyLibraryText] = useState("");
 
 	const emptyLibraryPhrases = [
 		"Great Scott! No Comics in this Multiverse...",
@@ -39,22 +39,27 @@ const Collection = ({ userId }) => {
 	useEffect(() => {
 		const fetchComics = async () => {
 			try {
+				const userId = localStorage.getItem("userId");
 				const response = await axios.get(
 					`http://localhost:5000/api/collection/${userId}`
 				);
 				setComics(response.data);
 			} catch (error) {
-				console.error("Error fetching collection:", error);
+				console.error("Error fetching comics:", error);
 			}
 		};
 
 		const fetchLibraries = async () => {
 			try {
+				const userId = localStorage.getItem("userId");
 				const response = await axios.get(
 					`http://localhost:5000/api/libraries/${userId}`
 				);
 				setLibraries(response.data);
-				setHasLibraries(response.data.length > 0); // Update hasLibraries state
+				setHasLibraries(response.data.length > 0);
+				if (response.data.length === 0) {
+					setEmptyLibraryText(getRandomPhrase());
+				}
 			} catch (error) {
 				console.error("Error fetching libraries:", error);
 			}
@@ -62,40 +67,29 @@ const Collection = ({ userId }) => {
 
 		fetchComics();
 		fetchLibraries();
-		setEmptyLibraryText(getRandomPhrase()); // Set fixed empty library text on mount
-	}, [userId]);
+	}, []);
 
-	// New useEffect to handle overflow property
 	useEffect(() => {
 		const updateOverflow = () => {
-			if (hasLibraries) {
-				document.body.style.overflow = "auto";
-				document.documentElement.style.overflow = "auto";
-			} else {
-				document.body.style.overflow = "hidden";
-				document.documentElement.style.overflow = "hidden";
-			}
+			document.body.style.overflow = hasLibraries ? "auto" : "hidden";
 		};
 
 		updateOverflow();
 
 		return () => {
-			// Reset overflow when component unmounts
 			document.body.style.overflow = "auto";
-			document.documentElement.style.overflow = "auto";
 		};
 	}, [hasLibraries]);
 
 	const handleCreateLibrary = async () => {
 		try {
-			const response = await axios.post(`http://localhost:5000/api/libraries`, {
+			const userId = localStorage.getItem("userId");
+			const response = await axios.post("http://localhost:5000/api/libraries", {
 				userId,
 				libraryName: newLibraryName,
 			});
-			setLibraries([...libraries, response.data]);
+			setLibraries((prevLibraries) => [...prevLibraries, response.data]);
 			setShowLibraryModal(false);
-			setNewLibraryName("");
-			setHasLibraries(true); // Update hasLibraries state
 		} catch (error) {
 			console.error("Error creating library:", error);
 		}
@@ -104,11 +98,10 @@ const Collection = ({ userId }) => {
 	const handleDeleteLibrary = async (libraryId) => {
 		try {
 			await axios.delete(`http://localhost:5000/api/libraries/${libraryId}`);
-			const updatedLibraries = libraries.filter(
-				(library) => library.id !== libraryId
+			setLibraries((prevLibraries) =>
+				prevLibraries.filter((library) => library.id !== libraryId)
 			);
-			setLibraries(updatedLibraries);
-			setHasLibraries(updatedLibraries.length > 0); // Update hasLibraries state
+			setShowDeleteModal(false);
 		} catch (error) {
 			console.error("Error deleting library:", error);
 		}
@@ -116,6 +109,7 @@ const Collection = ({ userId }) => {
 
 	const handleDeleteComic = async (comicId) => {
 		try {
+			const userId = localStorage.getItem("userId");
 			await axios.delete(
 				`http://localhost:5000/api/collection/${userId}/${comicId}`
 			);
@@ -129,7 +123,7 @@ const Collection = ({ userId }) => {
 
 	const handleEdit = (comic) => {
 		setEditingComic(comic);
-		setCollectionNumber(comic.collection_number || "");
+		setCollectionNumber(comic.collection_number || comic.issue_number || "");
 		setCollectionName(comic.collection_name || comic.title);
 		setLibraryName(comic.library_name || "");
 		setShowEditLibraryModal(true);
@@ -137,27 +131,30 @@ const Collection = ({ userId }) => {
 
 	const handleSave = async () => {
 		try {
-			const updatedComic = {
-				...editingComic,
-				collection_number: collectionNumber,
-				collection_name: collectionName,
-				library_name: libraryName,
-			};
-
+			const userId = localStorage.getItem("userId");
 			await axios.put(
 				`http://localhost:5000/api/collection/${userId}/${editingComic.id}`,
-				updatedComic
+				{
+					collection_number: collectionNumber,
+					collection_name: collectionName,
+					library_name: libraryName,
+				}
 			);
-
 			setComics((prevComics) =>
 				prevComics.map((comic) =>
-					comic.id === editingComic.id ? updatedComic : comic
+					comic.id === editingComic.id
+						? {
+								...comic,
+								collection_number: collectionNumber,
+								collection_name: collectionName,
+								library_name: libraryName,
+						  }
+						: comic
 				)
 			);
-			setEditingComic(null);
 			setShowEditLibraryModal(false);
 		} catch (error) {
-			console.error("Error updating comic:", error);
+			console.error("Error saving comic:", error);
 		}
 	};
 
@@ -174,17 +171,17 @@ const Collection = ({ userId }) => {
 		return acc;
 	}, {});
 
-	// Sort comics by issue number
 	for (const libraryName in groupedComics) {
 		groupedComics[libraryName].sort((a, b) => {
-			const issueNumberA = parseInt(a.collection_number || a.issue_number, 10);
-			const issueNumberB = parseInt(b.collection_number || b.issue_number, 10);
-			return issueNumberA - issueNumberB;
+			const issueA = parseInt(a.collection_number || a.issue_number || "0", 10);
+			const issueB = parseInt(b.collection_number || b.issue_number || "0", 10);
+			return issueA - issueB;
 		});
 	}
 
 	const handleAssignToLibrary = async (comicId, libraryName) => {
 		try {
+			const userId = localStorage.getItem("userId");
 			await axios.put(
 				`http://localhost:5000/api/collection/${userId}/${comicId}`,
 				{ library_name: libraryName }
@@ -205,35 +202,45 @@ const Collection = ({ userId }) => {
 				hasLibraries ? "has-libraries" : "no-libraries"
 			}`}>
 			<h1 className="my-collection">My Collection</h1>
+			<div className="action-buttons">
+				<button
+					className="add-library-button"
+					onClick={() => setShowLibraryModal(true)}>
+					<FaPlus />
+				</button>
+				<button
+					className="delete-library-button"
+					onClick={() => setShowDeleteModal(true)}>
+					<FaMinus />
+				</button>
+			</div>
 
 			{groupedComics["Recently Added"] &&
 				groupedComics["Recently Added"].length > 0 && (
 					<div>
 						<div className="top-bar">
 							<h2>Recently Added:</h2>
-							<div className="action-buttons">
-								<button
-									className="add-library-button"
-									onClick={() => setShowLibraryModal(true)}>
-									<FaPlus />
-								</button>
-								<button
-									className="delete-library-button"
-									onClick={() => setShowDeleteModal(true)}>
-									<FaMinus />
-								</button>
-							</div>
 						</div>
 						<div className="recently-added-row">
 							{groupedComics["Recently Added"]?.map((comic) => (
 								<div key={comic.id} className="comic-item">
 									<img
 										src={comic.cover_image_url}
-										alt={comic.title || "Unknown Title"}
+										alt={
+											comic.collection_name || comic.title || "Unknown Title"
+										}
 										className="comic-cover"
 									/>
 									<div className="comic-info">
-										<h3>{comic.title || "Unknown Title"}</h3>
+										<h3>
+											{comic.collection_name || comic.title || "Unknown Title"}
+										</h3>
+										<p>
+											Issue #
+											{formatIssueNumber(
+												comic.collection_number || comic.issue_number
+											)}
+										</p>
 									</div>
 									<button
 										onClick={() => handleEdit(comic)}
@@ -251,32 +258,39 @@ const Collection = ({ userId }) => {
 					</div>
 				)}
 
-			{libraries.length > 0 && (
+			{libraries.length > 0 ? (
 				<div>
 					<h2>Your Libraries:</h2>
 					{libraries.map((library) => {
 						const libraryComics = groupedComics[library.library_name] || [];
 						return (
-							<div key={library.id} className="series-row">
-								<h2>{library.library_name}</h2>
-								<div className="comics-series-shelf">
+							<div key={library.id} className="library-section">
+								<h3>{library.library_name}</h3>
+								<div className="library-comics-row">
 									{libraryComics.length > 0 ? (
 										libraryComics.map((comic) => (
 											<div key={comic.id} className="comic-item">
 												<img
 													src={comic.cover_image_url}
-													alt={comic.title || "Unknown Title"}
+													alt={
+														comic.collection_name ||
+														comic.title ||
+														"Unknown Title"
+													}
 													className="comic-cover"
 												/>
 												<div className="comic-info">
 													<h3>
 														{comic.collection_name ||
 															comic.title ||
-															"Unknown Title"}{" "}
-														- Issue #
-														{comic.collection_number ||
-															formatIssueNumber(comic.issue_number)}
+															"Unknown Title"}
 													</h3>
+													<p>
+														Issue #
+														{formatIssueNumber(
+															comic.collection_number || comic.issue_number
+														)}
+													</p>
 												</div>
 												<button
 													onClick={() => handleEdit(comic)}
@@ -298,6 +312,8 @@ const Collection = ({ userId }) => {
 						);
 					})}
 				</div>
+			) : (
+				<p>{emptyLibraryText}</p>
 			)}
 
 			{showEditLibraryModal && editingComic && (

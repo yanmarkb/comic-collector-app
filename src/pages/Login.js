@@ -19,7 +19,7 @@ const Login = ({ setAuth }) => {
 				formData
 			);
 			localStorage.setItem("token", response.data.token);
-			localStorage.setItem("userId", response.data.id);
+			localStorage.setItem("userId", response.data.id); // Save user ID to local storage
 			localStorage.setItem("username", response.data.username);
 			localStorage.setItem("email", response.data.email);
 			setAuth(true);

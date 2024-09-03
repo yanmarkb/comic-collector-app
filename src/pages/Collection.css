@@ -1,5 +1,5 @@
 body, html {
-    overflow: hidden;
+    overflow: auto;
 }
 
 .collection-container {
@@ -258,7 +258,18 @@ body, html {
     padding: 5px 10px;
     margin-top: 0;
 }
- 
-.my-collection{
+
+.my-collection {
     margin-top: 75px;
+}
+
+.library-section {
+    margin-bottom: 30px;
+}
+
+.library-comics-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
 }
