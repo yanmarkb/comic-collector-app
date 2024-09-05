@@ -11,19 +11,24 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
-import AddComic from "./pages/AddComic";
 import Collection from "./pages/Collection";
 import Wishlist from "./pages/Wishlist";
 import ComicDetails from "./pages/ComicDetails";
 import { logout } from "./services/authService";
 import "./App.css";
 
+// Function to check if user is authenticated
 const isAuthenticated = () => {
-	return !!localStorage.getItem("token");
+	const token = localStorage.getItem("token");
+	console.log("Token from localStorage:", token); // Debugging log to check token
+	return !!token; // Return true if token exists
 };
 
+// Function to retrieve user ID from localStorage
 const getUserId = () => {
-	return localStorage.getItem("userId");
+	const userId = localStorage.getItem("userId");
+	console.log("UserID from localStorage:", userId); // Debugging log to check userId
+	return userId;
 };
 
 function App() {
@@ -35,32 +40,38 @@ function App() {
 }
 
 function AppContent() {
-	const [auth, setAuth] = useState(isAuthenticated());
-	const userId = getUserId();
+	const [auth, setAuth] = useState(isAuthenticated()); // State to track if the user is authenticated
+	const userId = getUserId(); // Get the userId from localStorage
 	const [comicName, setComicName] = useState("");
 	const navigate = useNavigate();
 
+	// Check for authentication changes on component mount
 	useEffect(() => {
-		setAuth(isAuthenticated());
+		setAuth(isAuthenticated()); // Update auth state if token changes
 	}, []);
 
+	// Handle logging out the user
 	const handleLogout = () => {
 		logout();
-		setAuth(false);
+		setAuth(false); // Reset auth state after logging out
+		console.log("User logged out, token removed"); // Log logout action
 	};
 
+	// Handle search button click
 	const handleSearchButtonClick = () => {
-		navigate(`/?search=${comicName}`);
+		navigate(`/?search=${comicName}`); // Navigate to search results
 	};
 
+	// Handle search input key down (enter key for search)
 	const handleKeyDown = (event) => {
 		if (event.key === "Enter") {
-			handleSearchButtonClick();
+			handleSearchButtonClick(); // Trigger search when enter is pressed
 		}
 	};
 
+	// Handle input change
 	const handleChange = (event) => {
-		setComicName(event.target.value);
+		setComicName(event.target.value); // Update the comic search term
 	};
 
 	return (
