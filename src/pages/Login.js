@@ -15,7 +15,7 @@ const Login = ({ setAuth }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		console.log;
+		console.log("Form Submitted with Data:", formData); // Debugging
 
 		try {
 			const response = await axios.post(
