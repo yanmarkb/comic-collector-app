@@ -47,6 +47,7 @@ const Login = ({ setAuth }) => {
 			<input
 				type="email"
 				name="email"
+				id="email"
 				placeholder="Email"
 				onChange={handleChange}
 				required
@@ -54,6 +55,7 @@ const Login = ({ setAuth }) => {
 			<input
 				type="password"
 				name="password"
+				id="password"
 				placeholder="Password"
 				onChange={handleChange}
 				required

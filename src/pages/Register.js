@@ -34,6 +34,7 @@ const Register = ({ setAuth }) => {
 			<input
 				type="text"
 				name="username"
+				id="username"
 				placeholder="Username"
 				onChange={handleChange}
 				required
@@ -41,6 +42,7 @@ const Register = ({ setAuth }) => {
 			<input
 				type="email"
 				name="email"
+				id="email"
 				placeholder="Email"
 				onChange={handleChange}
 				required
@@ -48,6 +50,7 @@ const Register = ({ setAuth }) => {
 			<input
 				type="password"
 				name="password"
+				id="password"
 				placeholder="Password"
 				onChange={handleChange}
 				required
