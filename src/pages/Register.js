@@ -16,7 +16,7 @@ const Register = ({ setAuth }) => {
 		e.preventDefault();
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/api/register",
+				"https://backend-comic-collector-app.onrender.com/api/register",
 				formData
 			);
 			localStorage.setItem("token", response.data.token);

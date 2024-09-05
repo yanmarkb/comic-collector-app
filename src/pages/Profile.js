@@ -17,7 +17,7 @@ const Profile = ({ userId }) => {
 		const fetchProfile = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/api/user/${userId}`
+					`https://backend-comic-collector-app.onrender.com/api/user/${userId}`
 				);
 				setProfile(response.data);
 			} catch (error) {
@@ -36,7 +36,7 @@ const Profile = ({ userId }) => {
 
 		try {
 			const response = await axios.put(
-				`http://localhost:5000/api/user/${userId}/change-password`,
+				`https://backend-comic-collector-app.onrender.com/api/user/${userId}/change-password`,
 				{ oldPassword, newPassword }
 			);
 			setMessage(response.data.message);

@@ -43,7 +43,7 @@ const Collection = () => {
 			try {
 				const userId = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://localhost:5000/api/collection/${userId}`
+					`https://backend-comic-collector-app.onrender.com/api/collection/${userId}`
 				);
 				setComics(response.data);
 			} catch (error) {
@@ -55,7 +55,7 @@ const Collection = () => {
 			try {
 				const userId = localStorage.getItem("userId");
 				const response = await axios.get(
-					`http://localhost:5000/api/libraries/${userId}`
+					`https://backend-comic-collector-app.onrender.com/api/libraries/${userId}`
 				);
 				setLibraries(response.data);
 				setHasLibraries(response.data.length > 0);
@@ -86,10 +86,13 @@ const Collection = () => {
 	const handleCreateLibrary = async () => {
 		try {
 			const userId = localStorage.getItem("userId");
-			const response = await axios.post("http://localhost:5000/api/libraries", {
-				userId,
-				libraryName: newLibraryName,
-			});
+			const response = await axios.post(
+				"https://backend-comic-collector-app.onrender.com/api/libraries",
+				{
+					userId,
+					libraryName: newLibraryName,
+				}
+			);
 			setLibraries((prevLibraries) => [...prevLibraries, response.data]);
 			setShowLibraryModal(false);
 		} catch (error) {
@@ -99,7 +102,9 @@ const Collection = () => {
 
 	const handleDeleteLibrary = async (libraryId) => {
 		try {
-			await axios.delete(`http://localhost:5000/api/libraries/${libraryId}`);
+			await axios.delete(
+				`https://backend-comic-collector-app.onrender.com/api/libraries/${libraryId}`
+			);
 			setLibraries((prevLibraries) =>
 				prevLibraries.filter((library) => library.id !== libraryId)
 			);
@@ -113,7 +118,7 @@ const Collection = () => {
 		try {
 			const userId = localStorage.getItem("userId");
 			await axios.delete(
-				`http://localhost:5000/api/collection/${userId}/${comicId}`
+				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${comicId}`
 			);
 			setComics((prevComics) =>
 				prevComics.filter((comic) => comic.id !== comicId)
@@ -135,7 +140,7 @@ const Collection = () => {
 		try {
 			const userId = localStorage.getItem("userId");
 			await axios.put(
-				`http://localhost:5000/api/collection/${userId}/${editingComic.id}`,
+				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${editingComic.id}`,
 				{
 					collection_number: collectionNumber,
 					collection_name: collectionName,
@@ -185,7 +190,7 @@ const Collection = () => {
 		try {
 			const userId = localStorage.getItem("userId");
 			await axios.put(
-				`http://localhost:5000/api/collection/${userId}/${comicId}`,
+				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${comicId}`,
 				{ library_name: libraryName }
 			);
 			setComics((prevComics) =>

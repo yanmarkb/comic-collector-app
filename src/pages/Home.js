@@ -68,7 +68,7 @@ const Home = ({ userId, comicName }) => {
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/api/comics/search/${query}?page=${pageNumber}`
+				`https://backend-comic-collector-app.onrender.com/api/comics/search/${query}?page=${pageNumber}`
 			);
 			const fetchedComics = response.data;
 
@@ -115,7 +115,7 @@ const Home = ({ userId, comicName }) => {
 			};
 
 			const response = await axios.post(
-				"http://localhost:5000/api/comics",
+				"https://backend-comic-collector-app.onrender.com/api/comics",
 				comicData
 			);
 

@@ -15,7 +15,7 @@ const Login = ({ setAuth }) => {
 		e.preventDefault();
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/api/login",
+				"https://backend-comic-collector-app.onrender.com/api/login",
 				formData
 			);
 			localStorage.setItem("token", response.data.token);

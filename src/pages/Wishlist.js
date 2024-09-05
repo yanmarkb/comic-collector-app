@@ -8,7 +8,8 @@ const Wishlist = ({ userId }) => {
 		const fetchWishlist = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/api/wishlist/${userId}`
+					`https://backend-comic-collector-app.onrender.com
+/api/wishlist/${userId}`
 				);
 				setWishlist(response.data);
 			} catch (error) {

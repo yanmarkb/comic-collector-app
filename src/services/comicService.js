@@ -15,7 +15,7 @@ export const addComic = async (comic, userId) => {
 	};
 
 	const response = await axios.post(
-		"http://localhost:5000/api/comics",
+		"https://backend-comic-collector-app.onrender.com/api/comics",
 		comicData
 	);
 	return response.data;
@@ -24,7 +24,7 @@ export const addComic = async (comic, userId) => {
 const fetchComicDetails = async (comicVineId) => {
 	try {
 		const response = await axios.get(
-			`http://localhost:5000/api/comics/${comicVineId}`
+			`https://backend-comic-collector-app.onrender.com/api/comics/${comicVineId}`
 		);
 		return response.data;
 	} catch (error) {

@@ -9,7 +9,7 @@ const WelcomePopup = ({ onClose, onComicClick }) => {
 		const fetchRandomComic = async () => {
 			try {
 				const response = await axios.get(
-					"http://localhost:5000/api/comics/random"
+					"https://backend-comic-collector-app.onrender.com/api/comics/random"
 				);
 				setRandomComic(response.data);
 			} catch (error) {
