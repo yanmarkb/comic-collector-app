@@ -8,24 +8,36 @@ const Login = ({ setAuth }) => {
 	});
 
 	const handleChange = (e) => {
+		console.log("Input Change:", { [e.target.name]: e.target.value });
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+
+		console.log;
+
 		try {
 			const response = await axios.post(
 				"https://backend-comic-collector-app.onrender.com/api/login",
 				formData
 			);
-			localStorage.setItem("token", response.data.token);
-			localStorage.setItem("userId", response.data.id); // Save user ID to local storage
-			localStorage.setItem("username", response.data.username);
-			localStorage.setItem("email", response.data.email);
-			setAuth(true);
-			window.location.href = "/";
+
+			console.log("API Response:", response.data); // Debugging
+
+			if (response.data && response.data.token) {
+				localStorage.setItem("token", response.data.token);
+				localStorage.setItem("userId", response.data.id);
+				localStorage.setItem("username", response.data.username);
+				localStorage.setItem("email", response.data.email);
+				console.log("LocalStorage set with token, userId, username, and email"); // Log the localStorage status
+				setAuth(true);
+				window.location.href = "/";
+			} else {
+				console.error("Incomplete response data:", response.data); // Log if the response is incomplete
+			}
 		} catch (error) {
-			console.error("Error during login:", error);
+			console.error("Error during login:", error); // Log any errors during login
 		}
 	};
 
