@@ -111,12 +111,13 @@ body, html {
 }
 
 .comics-shelf {
+  margin-top: 100px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 20px;
-  overflow-y: auto;
   height: calc(100vh - 150px);
+  justify-content: center;
+  overflow-y: auto;
 }
 
 .comics-shelf::-webkit-scrollbar {
