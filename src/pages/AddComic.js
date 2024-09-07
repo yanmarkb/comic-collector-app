@@ -51,6 +51,9 @@ const AddComic = ({ userId }) => {
 				publisher: publisherName,
 				release_date: comic.cover_date || null,
 				user_id: userId,
+				collection_number: comic.collection_number || "Unknown Title",
+				collection_name: comic.title || "Unknown Title",
+				library_name: "Recently Added",
 			};
 
 			const response = await axios.post(
