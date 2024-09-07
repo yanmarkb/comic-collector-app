@@ -61,8 +61,7 @@ The project is split into two main parts:
 - Supabase account and project for the database
 
 ### Check out the live app
-[Live App](https://comic-collector-app.onrender.com/collection)
-
+[Live App](https://comic-collector-app.onrender.com/)
 
 ### View the Code
 
