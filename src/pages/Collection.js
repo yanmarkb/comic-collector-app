@@ -45,7 +45,14 @@ const Collection = () => {
 				const response = await axios.get(
 					`https://backend-comic-collector-app.onrender.com/api/collection/${userId}`
 				);
-				setComics(response.data);
+
+				// Map through the response data and flatten it to easily access comic details
+				const comicsData = response.data.map((collection) => ({
+					...collection.comics, // Extract comic details from the related table
+					collection_id: collection.comic_id, // Keep track of collection info
+				}));
+
+				setComics(comicsData);
 			} catch (error) {
 				console.error("Error fetching comics:", error);
 			}
@@ -238,25 +245,17 @@ const Collection = () => {
 						</div>
 						<div className="recently-added-row">
 							{groupedComics["Recently Added"]?.map((comic) => (
-								<div key={comic.id} className="comic-item">
+								<div className="comic-item">
 									<img
-										src={comic.cover_image_url}
-										alt={
-											comic.collection_name || comic.title || "Unknown Title"
-										}
+										src={comic.cover_image_url || "default-image-url"} // Add a fallback if no image
+										alt={comic.title || "Unknown Title"}
 										className="comic-cover"
 										onClick={() => handleComicClick(comic)}
 									/>
 									<div className="comic-info">
-										<h3>
-											{comic.collection_name || comic.title || "Unknown Title"}
-										</h3>
-										<p>
-											Issue #
-											{formatIssueNumber(
-												comic.collection_number || comic.issue_number
-											)}
-										</p>
+										<h3>{comic.title || "Unknown Title"}</h3>
+										<p>Issue #{comic.issue_number || "N/A"}</p>
+										<p>Publisher: {comic.publisher || "Unknown Publisher"}</p>
 									</div>
 									<button
 										onClick={() => handleEdit(comic)}
@@ -264,7 +263,7 @@ const Collection = () => {
 										<FaEdit />
 									</button>
 									<button
-										onClick={() => handleDeleteComic(comic.id)}
+										onClick={() => handleDeleteComic(comic.collection_id)}
 										className="delete-button">
 										Delete
 									</button>
