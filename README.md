@@ -19,9 +19,8 @@ The project is split into two main parts:
     - [Backend](#backend-1)
   - [Installation](#installation)
     - [Prerequisites](#prerequisites)
-    - [Setting Up the Project](#setting-up-the-project)
-- [Install frontend dependencies](#install-frontend-dependencies)
-- [Install backend dependencies](#install-backend-dependencies)
+    - [Check out the live app](#check-out-the-live-app)
+    - [View the Code](#view-the-code)
 
 ## Features
 
@@ -61,104 +60,21 @@ The project is split into two main parts:
 - NPM or Yarn package manager
 - Supabase account and project for the database
 
-### Setting Up the Project
+### Check out the live app
+[Live App](https://comic-collector-app.onrender.com/collection)
 
-1. Clone the repository:
+
+### View the Code
+
+1. Clone the backend repository:
    ```bash
-   git clone https://github.com/yourusername/comic-collector-app.git
-Navigate into the project directory:
+   git clone https://github.com/yanmarkb/backend-comic-collector-app.git
+   ```
 
-bash
-Copy code
-cd comic-collector-app
-Install dependencies for both frontend and backend:
-
-bash
-Copy code
-# Install frontend dependencies
-cd frontend
-npm install
-
-# Install backend dependencies
-cd ../backend
-npm install
-Set up environment variables:
-
-Create a .env file in the backend directory with the following variables:
-bash
-Copy code
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
-JWT_SECRET=your_jwt_secret
-Running the App
-Frontend
-Navigate to the frontend directory:
-
-bash
-Copy code
-cd frontend
-Run the development server:
-
-bash
-Copy code
-npm start
-The app should now be running at http://localhost:3000.
-
-Backend
-Navigate to the backend directory:
-
-bash
-Copy code
-cd backend
-Start the backend server:
-
-bash
-Copy code
-npm start
-The backend server will run at http://localhost:5000.
-
-Testing
-Frontend
-Unit Tests: The frontend includes unit tests using Jest and React Testing Library.
-To run the tests, navigate to the frontend directory and use the command:
-bash
-Copy code
-npm test
-Backend
-API Tests: The backend is tested using Jest and Supertest to ensure API endpoints work as expected.
-To run the backend tests, navigate to the backend directory and run:
-bash
-Copy code
-npm test
-Project Structure
-The project is organized into two main parts:
-
-Frontend (React)
-php
-Copy code
-frontend/
-│
-├── src/
-│   ├── components/     # Reusable React components
-│   ├── pages/          # Different page views like Home, Collection, etc.
-│   ├── services/       # API service for interacting with backend
-│   ├── App.js          # Main app component
-│   ├── index.js        # Entry point of the React app
-│   └── App.css         # Global styles
-│
-├── public/             # Public assets (favicon, index.html, etc.)
-└── package.json        # Frontend dependencies and scripts
-Backend (Node.js + Express)
-bash
-Copy code
-backend/
-│
-├── routes/             # API route handlers (e.g., user, comics, libraries)
-├── controllers/        # Business logic for handling requests
-├── models/             # Database models for Supabase
-├── server.js           # Main entry point for the backend server
-├── .env                # Environment variables for API keys, secrets, etc.
-└── package.json        # Backend dependencies and scripts
+2. Clone the frontend repository:
+   ```bash
+   git clone https://github.com/yanmarkb/comic-collector-app
+    ```
 Future Improvements
 There are a few things I’d like to add to make this project even better:
 
