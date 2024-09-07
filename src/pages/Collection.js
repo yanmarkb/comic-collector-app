@@ -257,16 +257,25 @@ const Collection = () => {
 						</div>
 						<div className="recently-added-row">
 							{groupedComics["Recently Added"]?.map((comic) => (
-								<div className="comic-item" key={comic.comic_id}>
+								<div className="comic-item" key={comic.collection_id}>
 									<img
 										src={comic.cover_image_url || "default-image-url"}
-										alt={comic.displayTitle}
+										alt={
+											comic.collection_name || comic.title || "Unknown Title"
+										} // Use collection name if available
 										className="comic-cover"
 										onClick={() => handleComicClick(comic)}
 									/>
 									<div className="comic-info">
-										<h3>{comic.displayTitle}</h3>
-										<p>Issue #{comic.displayNumber}</p>
+										{/* Use collection_name if available, otherwise fallback to title */}
+										<h3>
+											{comic.collection_name || comic.title || "Unknown Title"}
+										</h3>
+										{/* Use collection_number if available, otherwise fallback to issue_number */}
+										<p>
+											Issue #
+											{comic.collection_number || comic.issue_number || "N/A"}
+										</p>
 										<p>Publisher: {comic.publisher || "Unknown Publisher"}</p>
 									</div>
 									<button
@@ -275,7 +284,7 @@ const Collection = () => {
 										<FaEdit />
 									</button>
 									<button
-										onClick={() => handleDeleteComic(comic.comic_id)}
+										onClick={() => handleDeleteComic(comic.collection_id)}
 										className="delete-button">
 										Delete
 									</button>
@@ -284,6 +293,7 @@ const Collection = () => {
 						</div>
 					</div>
 				)}
+
 			{libraries.length > 0 ? (
 				<div>
 					<h2>Your Libraries:</h2>
