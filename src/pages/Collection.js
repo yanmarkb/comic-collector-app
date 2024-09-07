@@ -46,12 +46,10 @@ const Collection = () => {
 					`https://backend-comic-collector-app.onrender.com/api/collection/${userId}`
 				);
 
-				// Flatten the response data to easily access comic details
+				// Map through the response data and flatten it to easily access comic details
 				const comicsData = response.data.map((collection) => ({
 					...collection.comics, // Extract comic details from the related table
-					collection_id: collection.id, // Keep track of collection info
-					collection_name: collection.collection_name, // Custom name
-					collection_number: collection.collection_number, // Custom issue number
+					collection_id: collection.comic_id, // Keep track of collection info
 				}));
 
 				setComics(comicsData);
@@ -130,7 +128,7 @@ const Collection = () => {
 				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${comicId}`
 			);
 			setComics((prevComics) =>
-				prevComics.filter((comic) => comic.collection_id !== comicId)
+				prevComics.filter((comic) => comic.id !== comicId)
 			);
 		} catch (error) {
 			console.error("Error deleting comic:", error);
@@ -149,7 +147,7 @@ const Collection = () => {
 		try {
 			const userId = localStorage.getItem("userId");
 			await axios.put(
-				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${editingComic.collection_id}`,
+				`https://backend-comic-collector-app.onrender.com/api/collection/${userId}/${editingComic.comic_id}`,
 				{
 					collection_number: collectionNumber,
 					collection_name: collectionName,
@@ -158,7 +156,7 @@ const Collection = () => {
 			);
 			setComics((prevComics) =>
 				prevComics.map((comic) =>
-					comic.collection_id === editingComic.collection_id
+					comic.comic_id === editingComic.comic_id
 						? {
 								...comic,
 								collection_number: collectionNumber,
@@ -204,9 +202,7 @@ const Collection = () => {
 			);
 			setComics((prevComics) =>
 				prevComics.map((comic) =>
-					comic.collection_id === comicId
-						? { ...comic, library_name: libraryName }
-						: comic
+					comic.id === comicId ? { ...comic, library_name: libraryName } : comic
 				)
 			);
 		} catch (error) {
@@ -249,7 +245,7 @@ const Collection = () => {
 						</div>
 						<div className="recently-added-row">
 							{groupedComics["Recently Added"]?.map((comic) => (
-								<div className="comic-item" key={comic.collection_id}>
+								<div className="comic-item">
 									<img
 										src={comic.cover_image_url || "default-image-url"} // Add a fallback if no image
 										alt={comic.title || "Unknown Title"}
@@ -257,15 +253,8 @@ const Collection = () => {
 										onClick={() => handleComicClick(comic)}
 									/>
 									<div className="comic-info">
-										<h3>
-											{comic.collection_name || comic.title || "Unknown Title"}
-										</h3>
-										<p>
-											Issue #
-											{formatIssueNumber(
-												comic.collection_number || comic.issue_number
-											)}
-										</p>
+										<h3>{comic.title || "Unknown Title"}</h3>
+										<p>Issue #{comic.issue_number || "N/A"}</p>
 										<p>Publisher: {comic.publisher || "Unknown Publisher"}</p>
 									</div>
 									<button
@@ -295,7 +284,7 @@ const Collection = () => {
 								<div className="library-comics-row">
 									{libraryComics.length > 0 ? (
 										libraryComics.map((comic) => (
-											<div key={comic.collection_id} className="comic-item">
+											<div key={comic.id} className="comic-item">
 												<img
 													src={comic.cover_image_url}
 													alt={
@@ -325,7 +314,7 @@ const Collection = () => {
 													<FaEdit />
 												</button>
 												<button
-													onClick={() => handleDeleteComic(comic.collection_id)}
+													onClick={() => handleDeleteComic(comic.id)}
 													className="delete-button">
 													Delete
 												</button>
