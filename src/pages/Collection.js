@@ -52,6 +52,7 @@ const Collection = () => {
 					collection_id: collection.id, // Keep track of collection info
 					collection_name: collection.collection_name, // Custom name
 					collection_number: collection.collection_number, // Custom issue number
+					library_name: collection.library_name, // Library name
 				}));
 
 				setComics(comicsData);
@@ -287,57 +288,61 @@ const Collection = () => {
 			{libraries.length > 0 ? (
 				<div>
 					<h2>Your Libraries:</h2>
-					{libraries.map((library) => {
-						const libraryComics = groupedComics[library.library_name] || [];
-						return (
-							<div key={library.id} className="library-section">
-								<h3>{library.library_name}</h3>
-								<div className="library-comics-row">
-									{libraryComics.length > 0 ? (
-										libraryComics.map((comic) => (
-											<div key={comic.collection_id} className="comic-item">
-												<img
-													src={comic.cover_image_url}
-													alt={
-														comic.collection_name ||
-														comic.title ||
-														"Unknown Title"
-													}
-													className="comic-cover"
-													onClick={() => handleComicClick(comic)}
-												/>
-												<div className="comic-info">
-													<h3>
-														{comic.collection_name ||
+					{libraries
+						.sort((a, b) => a.library_name.localeCompare(b.library_name))
+						.map((library) => {
+							const libraryComics = groupedComics[library.library_name] || [];
+							return (
+								<div key={library.id} className="library-section">
+									<h3>{library.library_name}</h3>
+									<div className="library-comics-row">
+										{libraryComics.length > 0 ? (
+											libraryComics.map((comic) => (
+												<div key={comic.collection_id} className="comic-item">
+													<img
+														src={comic.cover_image_url}
+														alt={
+															comic.collection_name ||
 															comic.title ||
-															"Unknown Title"}
-													</h3>
-													<p>
-														Issue #
-														{formatIssueNumber(
-															comic.collection_number || comic.issue_number
-														)}
-													</p>
+															"Unknown Title"
+														}
+														className="comic-cover"
+														onClick={() => handleComicClick(comic)}
+													/>
+													<div className="comic-info">
+														<h3>
+															{comic.collection_name ||
+																comic.title ||
+																"Unknown Title"}
+														</h3>
+														<p>
+															Issue #
+															{formatIssueNumber(
+																comic.collection_number || comic.issue_number
+															)}
+														</p>
+													</div>
+													<button
+														onClick={() => handleEdit(comic)}
+														className="edit-button">
+														<FaEdit />
+													</button>
+													<button
+														onClick={() =>
+															handleDeleteComic(comic.collection_id)
+														}
+														className="delete-button">
+														Delete
+													</button>
 												</div>
-												<button
-													onClick={() => handleEdit(comic)}
-													className="edit-button">
-													<FaEdit />
-												</button>
-												<button
-													onClick={() => handleDeleteComic(comic.collection_id)}
-													className="delete-button">
-													Delete
-												</button>
-											</div>
-										))
-									) : (
-										<p>{emptyLibraryText}</p>
-									)}
+											))
+										) : (
+											<p>{emptyLibraryText}</p>
+										)}
+									</div>
 								</div>
-							</div>
-						);
-					})}
+							);
+						})}
 				</div>
 			) : (
 				<p>{emptyLibraryText}</p>
