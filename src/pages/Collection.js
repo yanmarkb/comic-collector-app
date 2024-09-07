@@ -138,7 +138,10 @@ const Collection = () => {
 	};
 
 	const handleEdit = (comic) => {
-		setEditingComic(comic);
+		setEditingComic({
+			...comic,
+			collection_id: comic.collection_id || comic.id, // Ensure correct ID is passed
+		});
 		setCollectionNumber(comic.collection_number || comic.issue_number || "");
 		setCollectionName(comic.collection_name || comic.title);
 		setLibraryName(comic.library_name || "");
@@ -178,15 +181,21 @@ const Collection = () => {
 		return issueNumber ? issueNumber.replace(/\D/g, "") : "N/A";
 	};
 
+	// Updated groupedComics logic to include custom display names and issue numbers
 	const groupedComics = comics.reduce((acc, comic) => {
 		const libraryName = comic.library_name || "Recently Added";
 		if (!acc[libraryName]) {
 			acc[libraryName] = [];
 		}
-		acc[libraryName].push(comic);
+		acc[libraryName].push({
+			...comic,
+			displayTitle: comic.collection_name || comic.title || "Unknown Title",
+			displayNumber: comic.collection_number || comic.issue_number || "N/A",
+		});
 		return acc;
 	}, {});
 
+	// Sorting grouped comics
 	for (const libraryName in groupedComics) {
 		groupedComics[libraryName].sort((a, b) => {
 			const issueA = parseInt(a.collection_number || a.issue_number || "0", 10);
@@ -252,21 +261,14 @@ const Collection = () => {
 								<div className="comic-item" key={comic.collection_id}>
 									<img
 										src={comic.cover_image_url || "default-image-url"} // Add a fallback if no image
-										alt={comic.title || "Unknown Title"}
+										alt={comic.displayTitle}
 										className="comic-cover"
 										onClick={() => handleComicClick(comic)}
 									/>
 									<div className="comic-info">
-										<h3>
-											{comic.collection_name || comic.title || "Unknown Title"}
-										</h3>
-										<p>
-											Issue #
-											{formatIssueNumber(
-												comic.collection_number || comic.issue_number
-											)}
-										</p>
-										<p>Publisher: {comic.publisher || "Unknown Publisher"}</p>
+										<h3>{comic.displayTitle}</h3>
+										<p>Issue #{comic.displayNumber}</p>
+										{/* <p>Publisher: {comic.publisher || "Unknown Publisher"}</p> */}
 									</div>
 									<button
 										onClick={() => handleEdit(comic)}
@@ -307,17 +309,8 @@ const Collection = () => {
 													onClick={() => handleComicClick(comic)}
 												/>
 												<div className="comic-info">
-													<h3>
-														{comic.collection_name ||
-															comic.title ||
-															"Unknown Title"}
-													</h3>
-													<p>
-														Issue #
-														{formatIssueNumber(
-															comic.collection_number || comic.issue_number
-														)}
-													</p>
+													<h3>{comic.displayTitle}</h3>
+													<p>Issue #{formatIssueNumber(comic.displayNumber)}</p>
 												</div>
 												<button
 													onClick={() => handleEdit(comic)}
