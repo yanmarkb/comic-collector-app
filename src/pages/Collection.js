@@ -249,7 +249,6 @@ const Collection = () => {
 					<FaMinus />
 				</button>
 			</div>
-
 			{groupedComics["Recently Added"] &&
 				groupedComics["Recently Added"].length > 0 && (
 					<div>
@@ -260,7 +259,7 @@ const Collection = () => {
 							{groupedComics["Recently Added"]?.map((comic) => (
 								<div className="comic-item" key={comic.collection_id}>
 									<img
-										src={comic.cover_image_url || "default-image-url"} // Add a fallback if no image
+										src={comic.cover_image_url || "default-image-url"}
 										alt={comic.displayTitle}
 										className="comic-cover"
 										onClick={() => handleComicClick(comic)}
@@ -268,7 +267,7 @@ const Collection = () => {
 									<div className="comic-info">
 										<h3>{comic.displayTitle}</h3>
 										<p>Issue #{comic.displayNumber}</p>
-										{/* <p>Publisher: {comic.publisher || "Unknown Publisher"}</p> */}
+										<p>Publisher: {comic.publisher || "Unknown Publisher"}</p>
 									</div>
 									<button
 										onClick={() => handleEdit(comic)}
@@ -285,7 +284,6 @@ const Collection = () => {
 						</div>
 					</div>
 				)}
-
 			{libraries.length > 0 ? (
 				<div>
 					<h2>Your Libraries:</h2>
@@ -335,7 +333,6 @@ const Collection = () => {
 			) : (
 				<p>{emptyLibraryText}</p>
 			)}
-
 			{showEditLibraryModal && editingComic && (
 				<div className="edit-modal">
 					<h2>Edit Comic</h2>
@@ -378,7 +375,6 @@ const Collection = () => {
 					</button>
 				</div>
 			)}
-
 			{showLibraryModal && (
 				<div className="edit-modal">
 					<h2>Create New Library</h2>
@@ -400,7 +396,6 @@ const Collection = () => {
 					</button>
 				</div>
 			)}
-
 			{showDeleteModal && (
 				<div className="delete-modal">
 					<h2>Delete a Library</h2>
@@ -423,7 +418,6 @@ const Collection = () => {
 					</button>
 				</div>
 			)}
-
 			{selectedComic && (
 				<div className="comic-details-modal">
 					<div className="comic-details-overlay" onClick={closeModal}></div>
